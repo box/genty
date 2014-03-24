@@ -1,0 +1,5 @@
+coveralls
+mock
+pep8
+pylint
+tox
