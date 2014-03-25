@@ -1,6 +1,9 @@
 genty
 =====
 
+.. image:: https://travis-ci.org/box/genty.png?branch=master
+    :target: https://travis-ci.org/box/genty
+
 Genty, pronounced "gen-tee", stands for "generate tests". It promotes generative 
 testing, where a single test can execute over a variety of input. Genty makes
 this a breeze.
