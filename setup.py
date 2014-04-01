@@ -13,11 +13,11 @@ def main():
         description='Allows you to run a test with multiple data sets',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
-        author_email='peter.potrebic@gmail.com',
+        author_email='oss@box.com',
         url='https://github.com/box/genty',
         license=open(join(base_dir, 'LICENSE')).read(),
         packages=find_packages(exclude=['test']),
-        namespace_packages=[b'box'],
+        namespace_packages=[b'box', b'box.test'],
         test_suite='test',
         zip_safe=False,
     )
