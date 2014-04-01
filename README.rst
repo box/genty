@@ -34,6 +34,7 @@ the tests:
 
 Running the MyClassTests using the default unittest runner
 ::
+
     $ python -m unittest -v sample
     test_add_one(0, 1) (sample.MyClassTests) ... ok
     test_add_one(100000, 100001) (sample.MyClassTests) ... ok
