@@ -10,7 +10,8 @@ this a breeze.
 
 For example, consider a file sample.py containing both the code under test and
 the tests:
-::
+
+.. code-block:: python
 
     from box.test.genty import genty, genty_repeat, genty_dataset
     from unittest import TestCase
@@ -33,7 +34,8 @@ the tests:
 
 
 Running the MyClassTests using the default unittest runner
-::
+
+.. code-block:: console
 
     $ python -m unittest -v sample
     test_add_one(0, 1) (sample.MyClassTests) ... ok
@@ -53,7 +55,8 @@ It produces expressive tests.
 
 Another option is running the same test multiple times. This is useful in stress
 tests or when excerising code looking for race conditions. This particular test
-::
+
+.. code-block:: python
 
     @genty_repeat(3)
     def test_adding_one_to_zero(self):
@@ -61,7 +64,8 @@ tests or when excerising code looking for race conditions. This particular test
 
 
 would be run 3 times, producing output like
-::
+
+.. code-block:: console
 
     $ python -m unittest -v sample
     test_adding_one() iteration_1 (sample.MyClassTests) ... ok
@@ -74,7 +78,8 @@ would be run 3 times, producing output like
     OK
 
 The 2 techniques can be combined:
-::
+
+.. code-block:: python
 
         @genty_repeat(2)
         @genty_dataset(
@@ -87,8 +92,8 @@ The 2 techniques can be combined:
             
 
 There are more options to explore including naming your datasets and genty_args.
-::
 
+.. code-block:: python
  
         @genty_dataset(
             default_case=(0, 1),
@@ -100,7 +105,8 @@ There are more options to explore including naming your datasets and genty_args.
  
 
 would run 3 tests, producing output like
-::
+
+.. code-block:: console
 
     $ python -m unittest -v sample
     test_complex(default_case) (sample.MyClassTests) ... ok
@@ -123,7 +129,7 @@ Installation
 
 To install, simply:
 
-::
+.. code-block:: console
 
     pip install genty
 
@@ -139,7 +145,7 @@ Setup
 
 Create a virtual environment and install packages -
 
-::
+.. code-block:: console
 
     mkvirtualenv genty
     pip install -r requirements-dev.txt
@@ -150,7 +156,7 @@ Testing
 
 Run all tests using -
 
-::
+.. code-block:: console
 
     tox
 
