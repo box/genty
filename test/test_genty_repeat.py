@@ -15,19 +15,19 @@ class GentyRepeatTest(TestCase):
         self.assertEqual(15, some_func.genty_repeat_count)
 
     def test_repeat_decorator_decorates_method_with_appropriate_repeat_count(self):
-        class some_class(object):
+        class SomeClass(object):
             @genty_repeat(13)
             def some_func(self):
                 pass
 
-        some_instance = some_class()
+        some_instance = SomeClass()
 
         self.assertEqual(13, some_instance.some_func.genty_repeat_count)
 
     def test_repeat_rejects_negative_counts(self):
         with self.assertRaises(ValueError) as context:
             @genty_repeat(-1)
-            def some_func():
+            def _():
                 pass
 
         self.assertIn('Please pick a value >= 0', context.exception.message)
