@@ -10,11 +10,10 @@ from box.test.genty import genty_repeat
 from box.test.genty.genty_args import genty_args
 
 
-# pylint: disable=no-self-use
-# Lots of the tests below create dummy methods that don't use 'self'.
-
 class GentyTest(TestCase):
     """Tests for :mod:`box.test.genty.genty`."""
+    # pylint: disable=no-self-use
+    # Lots of the tests below create dummy methods that don't use 'self'.
 
     def _count_test_methods(self, target_cls):
         return len([
