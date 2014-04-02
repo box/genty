@@ -6,6 +6,7 @@ from unittest import TestCase
 from box.test.genty import genty_dataset, genty
 from box.test.genty.genty_args import genty_args
 
+
 @genty
 class GentyArgsTest(TestCase):
     """Tests for :mod:`box.test.genty.genty_args`."""
