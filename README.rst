@@ -143,7 +143,7 @@ To install, simply:
 Contributing
 ------------
 
-See `CONTRIBUTING <CONTRIBUTING.rst>`_.
+See `CONTRIBUTING <https://github.com/box/genty/blob/master/CONTRIBUTING.rst>`_.
 
 
 Setup
