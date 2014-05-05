@@ -46,7 +46,8 @@ def _expand_tests(target_cls):
     entries = dict(target_cls.__dict__.iteritems())
     for key, value in entries.iteritems():
         if key.startswith('test') and isinstance(value, types.FunctionType):
-            yield key, value
+            if not hasattr(value, 'genty_generated_test'):
+                yield key, value
 
 
 def _expand_datasets(test_functions):
