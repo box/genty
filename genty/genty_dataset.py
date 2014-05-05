@@ -2,8 +2,8 @@
 
 from __future__ import unicode_literals
 from collections import OrderedDict
-from box.test.genty.genty_args import GentyArgs
-from box.test.genty.private import format_arg
+from .genty_args import GentyArgs
+from .private import format_arg
 
 
 def genty_dataset(*args, **kwargs):
