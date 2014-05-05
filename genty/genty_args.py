@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from itertools import chain
-from box.test.genty.private import format_arg, format_kwarg
+from .private import format_arg, format_kwarg
 
 
 class GentyArgs(object):

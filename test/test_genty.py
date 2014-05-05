@@ -4,10 +4,7 @@ from __future__ import unicode_literals
 import inspect
 from unittest import TestCase
 from mock import patch
-from box.test.genty import genty
-from box.test.genty import genty_dataset
-from box.test.genty import genty_repeat
-from box.test.genty.genty_args import genty_args
+from genty import genty, genty_dataset, genty_args, genty_repeat
 
 
 class GentyTest(TestCase):

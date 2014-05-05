@@ -7,8 +7,7 @@ from __future__ import unicode_literals
 
 from itertools import product
 from unittest import TestCase
-from box.test.genty import genty, genty_repeat, genty_dataset
-from box.test.genty.genty_args import genty_args
+from genty import genty, genty_repeat, genty_dataset, genty_args
 
 
 @genty
