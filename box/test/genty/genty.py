@@ -275,12 +275,12 @@ def _build_method_wrapper(method, dataset):
 
 
 def _add_method_to_class(
-    target_cls,
-    method_name,
-    func,
-    dataset_name,
-    dataset,
-    repeat_suffix,
+        target_cls,
+        method_name,
+        func,
+        dataset_name,
+        dataset,
+        repeat_suffix,
 ):
     """
     Add the described method to the given class.
