@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import functools
 import inspect
 from unittest import TestCase
 from mock import patch
@@ -138,14 +139,39 @@ class GentyTest(TestCase):
         self.assertFalse(hasattr(instance, 'test_something'), "original method should not exist")
 
     def test_genty_properly_composes_dataset_methods_up_hierarchy(self):
+        # Some test frameworks set attributes on test classes directly through metaclasses. pymox is an example.
+        # This test ensures that genty still won't expand inherited tests twice.
+        class SomeMeta(type):
+            def __init__(cls, name, bases, d):
+                for base in bases:
+                    for attr_name in dir(base):
+                        if attr_name not in d:
+                            d[attr_name] = getattr(base, attr_name)
+
+                for func_name, func in d.items():
+                    if func_name.startswith('test') and callable(func):
+                        setattr(cls, func_name, cls.wrap_method(func))
+
+                super(SomeMeta, cls).__init__(name, bases, d)
+
+            def wrap_method(cls, func):
+                @functools.wraps(func)
+                def wrapped(*args, **kwargs):
+                    return func(*args, **kwargs)
+                return wrapped
+
         @genty
         class SomeParent(object):
+            __metaclass__ = SomeMeta
+
             @genty_dataset(100, 10)
             def test_parent(self, val):
                 return val + 1
 
         @genty
         class SomeChild(SomeParent):
+            __metaclass__ = SomeMeta
+
             @genty_dataset('a', 'b')
             def test_child(self, val):
                 return val + val
@@ -157,6 +183,13 @@ class GentyTest(TestCase):
         self.assertEqual(11, getattr(instance, 'test_parent(10)')())
         self.assertEqual('aa', getattr(instance, "test_child(u'a')")())
         self.assertEqual('bb', getattr(instance, "test_child(u'b')")())
+
+        entries = dict(SomeChild.__dict__.iteritems())
+        self.assertEqual(4, len([meth for name, meth in entries.iteritems() if name.startswith('test')]))
+        self.assertFalse(hasattr(instance, 'test_parent(100)(100)'), 'genty should not expand a test more than once')
+        self.assertFalse(hasattr(instance, 'test_parent(100)(10)'), 'genty should not expand a test more than once')
+        self.assertFalse(hasattr(instance, 'test_parent(100)(10)'), 'genty should not expand a test more than once')
+        self.assertFalse(hasattr(instance, 'test_parent(10)(10)'), 'genty should not expand a test more than once')
 
         self.assertFalse(hasattr(instance, 'test_parent'), "original method should not exist")
         self.assertFalse(hasattr(instance, 'test_child'), "original method should not exist")
