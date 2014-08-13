@@ -2,8 +2,11 @@
 
 from __future__ import unicode_literals
 from unittest import TestCase
-if not hasattr(TestCase, 'assertItemsEqual'):
+if not hasattr(TestCase, 'assertItemsEqual') and not hasattr(TestCase, 'assertCountEqual'):
+    # Python 2.6 support
+    # pylint:disable=import-error
     from unittest2 import TestCase
+    # pylint:enable=import-error
 
 from box.test.genty import genty_dataset, genty
 from box.test.genty.genty_args import genty_args
@@ -18,7 +21,10 @@ class GentyArgsTest(TestCase):
         if hasattr(self, 'assertItemsEqual'):
             return self.assertItemsEqual(first, second, msg)
         else:
+            # Python 3.3+ support
+            # pylint:disable=all
             return self.assertCountEqual(first, second, msg)
+            # pylint:enable=all
 
     @genty_dataset(
         (4, 3, 2),

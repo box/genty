@@ -5,7 +5,9 @@ try:
     from collections import OrderedDict
 except ImportError:
     # Python 2.6 support
+    # pylint:disable=import-error
     from ordereddict import OrderedDict
+    # pylint:enable=import-error
 from box.test.genty.genty_args import GentyArgs
 from box.test.genty.private import format_arg
 

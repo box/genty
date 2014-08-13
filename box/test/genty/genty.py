@@ -185,7 +185,10 @@ def _build_repeat_suffix(iteration, count):
         `unicode`
     """
     format_width = int(math.ceil(math.log(count + 1, 10)))
-    new_suffix = 'iteration_{0:0{width}d}'.format(iteration, width=format_width)
+    new_suffix = 'iteration_{0:0{width}d}'.format(
+        iteration,
+        width=format_width
+    )
     return new_suffix
 
 

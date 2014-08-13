@@ -162,15 +162,15 @@ class GentyTest(TestCase):
                 return wrapped
 
         @genty_dataset(100, 10)
-        def test_parent(self, val):
+        def test_parent(_, val):
             return val + 1
 
-        SomeParent = genty(SomeMeta(str('SomeParent'), (object,), {
+        some_parent = genty(SomeMeta(str('SomeParent'), (object,), {
             'test_parent': test_parent
         }))
 
         @genty
-        class SomeChild(SomeParent):
+        class SomeChild(some_parent):
             @genty_dataset('a', 'b')
             def test_child(self, val):
                 return val + val

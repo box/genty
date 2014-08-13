@@ -2,8 +2,11 @@
 
 from __future__ import unicode_literals
 from unittest import TestCase
-if not hasattr(TestCase, 'assertItemsEqual'):
+if not hasattr(TestCase, 'assertItemsEqual') and not hasattr(TestCase, 'assertCountEqual'):
+    # Python 2.6 support
+    # pylint:disable=import-error
     from unittest2 import TestCase
+    # pylint:enable=import-error
 
 from box.test.genty import genty_repeat
 
