@@ -171,6 +171,7 @@ class GentyTest(TestCase):
 
         @genty
         class SomeChild(some_parent):
+            # pylint:disable=no-init
             @genty_dataset('a', 'b')
             def test_child(self, val):
                 return val + val
