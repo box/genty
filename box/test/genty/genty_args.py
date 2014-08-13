@@ -29,7 +29,7 @@ class GentyArgs(object):
         First, yield value of args in given order.
         Then yield kwargs in sorted order, formatted as key_equals_value.
         """
-        sorted_kwargs = sorted(self._kwargs.iteritems())
+        sorted_kwargs = sorted(self._kwargs.items())
         return chain(
             (format_arg(arg) for arg in self._args),
             (format_kwarg(k, v) for k, v in sorted_kwargs),

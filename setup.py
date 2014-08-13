@@ -1,12 +1,18 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from setuptools import setup, find_packages
 from os.path import dirname, join
+from setuptools import setup, find_packages
+from sys import version_info
 
 
 def main():
     base_dir = dirname(__file__)
+    requirements = []
+    test_requirements = []
+    if version_info[0] == 2 and version_info[1] == 6:
+        requirements.append('ordereddict')
+        test_requirements.append('unittest2')
     setup(
         name='genty',
         version='0.2.0',
@@ -17,10 +23,12 @@ def main():
         url='https://github.com/box/genty',
         license=open(join(base_dir, 'LICENSE')).read(),
         packages=find_packages(exclude=['test']),
-        namespace_packages=[b'box', b'box.test'],
+        namespace_packages=['box', 'box.test'],
         test_suite='test',
         zip_safe=False,
         keywords='genty tests generative',
+        install_requires=requirements,
+        tests_require=test_requirements,
     )
 
 

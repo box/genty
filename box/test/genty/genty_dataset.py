@@ -1,7 +1,11 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    # Python 2.6 support
+    from ordereddict import OrderedDict
 from box.test.genty.genty_args import GentyArgs
 from box.test.genty.private import format_arg
 
@@ -144,5 +148,5 @@ def _add_kwarg_datasets(datasets, kwargs):
     :type kwargs:
         `dict` of `unicode` to varies
     """
-    for test_method_suffix, dataset in kwargs.iteritems():
+    for test_method_suffix, dataset in kwargs.items():
         datasets[test_method_suffix] = dataset

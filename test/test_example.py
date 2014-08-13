@@ -29,7 +29,7 @@ class ExampleTests(TestCase):
         pass
 
     @genty_dataset(
-        some_test_case=(10, 'happy', unicode),
+        some_test_case=(10, 'happy', str),
         another_test_case=(7, 'sleepy', float),
     )
     def test_example_of_named_datasets(self, value, message, kind):

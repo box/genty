@@ -3,6 +3,23 @@
 from __future__ import unicode_literals
 
 
+try:
+    isinstance('', basestring)
+    isinstance('', unicode)
+
+    def _isstr(value):
+        return isinstance(value, basestring)
+
+    def _tostr(value):
+        return unicode(value)
+except NameError:
+    def _isstr(value):
+        return isinstance(value, str)
+
+    def _tostr(value):
+        return str(value)
+
+
 def format_kwarg(key, value):
     """
     Return a string of form:  "key=<value>"
@@ -10,10 +27,9 @@ def format_kwarg(key, value):
     If 'value' is a string, we want it quoted. The goal is to make
     the string a named parameter in a method call.
     """
-    translator = repr if isinstance(value, basestring) else unicode
-    arg_value = translator(value)
+    arg_value = repr(value) if _isstr(value) else _tostr(value)
 
-    return '{}={}'.format(key, arg_value)
+    return '{0}={1}'.format(key, arg_value)
 
 
 def format_arg(value):
@@ -27,4 +43,4 @@ def format_arg(value):
     :rtype:
         `unicode`
     """
-    return repr(value) if isinstance(value, basestring) else unicode(value)
+    return repr(value) if _isstr(value) else _tostr(value)

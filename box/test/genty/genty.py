@@ -43,8 +43,8 @@ def _expand_tests(target_cls):
     :rtype:
         `generator` of `tuple` of (`unicode`, `function`)
     """
-    entries = dict(target_cls.__dict__.iteritems())
-    for key, value in entries.iteritems():
+    entries = dict(target_cls.__dict__.items())
+    for key, value in entries.items():
         if key.startswith('test') and isinstance(value, types.FunctionType):
             if not hasattr(value, 'genty_generated_test'):
                 yield key, value
@@ -68,7 +68,7 @@ def _expand_datasets(test_functions):
     for name, func in test_functions:
         datasets = getattr(func, 'genty_datasets', {})
         if datasets:
-            for dataset_name, dataset in datasets.iteritems():
+            for dataset_name, dataset in datasets.items():
                 yield name, func, dataset_name, dataset
         else:
             yield name, func, None, None
@@ -94,7 +94,7 @@ def _expand_repeats(test_functions):
     for name, func, dataset_name, dataset in test_functions:
         repeat_count = getattr(func, 'genty_repeat_count', 0)
         if repeat_count:
-            for i in xrange(1, repeat_count + 1):
+            for i in range(1, repeat_count + 1):
                 repeat_suffix = _build_repeat_suffix(i, repeat_count)
                 yield name, func, dataset_name, dataset, repeat_suffix
         elif dataset:
@@ -159,7 +159,7 @@ def _is_referenced_in_argv(method_name):
     :rtype:
         `bool`
     """
-    expr = '.*[:.]{}$'.format(method_name)
+    expr = '.*[:.]{0}$'.format(method_name)
     regex = re.compile(expr)
     return any(regex.match(arg) for arg in sys.argv)
 
@@ -185,7 +185,7 @@ def _build_repeat_suffix(iteration, count):
         `unicode`
     """
     format_width = int(math.ceil(math.log(count + 1, 10)))
-    new_suffix = 'iteration_{:0{width}d}'.format(iteration, width=format_width)
+    new_suffix = 'iteration_{0:0{width}d}'.format(iteration, width=format_width)
     return new_suffix
 
 
@@ -245,12 +245,12 @@ def _build_final_method_name(method_name, dataset_name, repeat_suffix):
         return method_name
 
     # Place data_set info inside parens, as if it were a function call
-    test_method_suffix = '({})'.format(dataset_name or "")
+    test_method_suffix = '({0})'.format(dataset_name or "")
 
     if repeat_suffix:
         test_method_suffix = test_method_suffix + " " + repeat_suffix
 
-    test_method_name_for_dataset = "{}{}".format(
+    test_method_name_for_dataset = "{0}{1}".format(
         method_name,
         test_method_suffix,
     )
@@ -272,6 +272,20 @@ def _build_method_wrapper(method, dataset):
     else:
         test_method_for_dataset = lambda my_self: method(my_self)
     return test_method_for_dataset
+
+
+try:
+    isinstance('', unicode)
+
+    def ensure_value_is_string(value):
+        value = value.encode(
+            'utf-8',
+            'replace',
+        )
+        return value
+except NameError:
+    def ensure_value_is_string(value):
+        return value
 
 
 def _add_method_to_class(
@@ -323,9 +337,8 @@ def _add_method_to_class(
         func,
     )
 
-    test_method_name_for_dataset = test_method_name_for_dataset.encode(
-        'utf-8',
-        'replace',
+    test_method_name_for_dataset = ensure_value_is_string(
+        test_method_name_for_dataset
     )
     test_method_for_dataset.__name__ = test_method_name_for_dataset
     test_method_for_dataset.genty_generated_test = True

@@ -2,6 +2,9 @@
 
 from __future__ import unicode_literals
 from unittest import TestCase
+if not hasattr(TestCase, 'assertItemsEqual'):
+    from unittest2 import TestCase
+
 from box.test.genty import genty_repeat
 
 
@@ -31,7 +34,7 @@ class GentyRepeatTest(TestCase):
             def _():
                 pass
 
-        self.assertIn('Please pick a value >= 0', context.exception.message)
+        self.assertIn('Please pick a value >= 0', str(context.exception))
 
     def test_repeat_allows_zero_iterations(self):
         @genty_repeat(0)
