@@ -8,6 +8,7 @@ except ImportError:
     # pylint:disable=import-error
     from ordereddict import OrderedDict
     # pylint:enable=import-error
+import six
 from box.test.genty.genty_args import GentyArgs
 from box.test.genty.private import format_arg
 
@@ -150,5 +151,5 @@ def _add_kwarg_datasets(datasets, kwargs):
     :type kwargs:
         `dict` of `unicode` to varies
     """
-    for test_method_suffix, dataset in kwargs.items():
+    for test_method_suffix, dataset in six.iteritems(kwargs):
         datasets[test_method_suffix] = dataset

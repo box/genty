@@ -5,6 +5,8 @@ import functools
 import math
 import types
 import re
+import six
+from six.moves import xrange  # pylint: disable=redefined-builtin,import-error
 import sys
 from box.test.genty.genty_args import GentyArgs
 
@@ -68,7 +70,7 @@ def _expand_datasets(test_functions):
     for name, func in test_functions:
         datasets = getattr(func, 'genty_datasets', {})
         if datasets:
-            for dataset_name, dataset in datasets.items():
+            for dataset_name, dataset in six.iteritems(datasets):
                 yield name, func, dataset_name, dataset
         else:
             yield name, func, None, None
@@ -94,7 +96,7 @@ def _expand_repeats(test_functions):
     for name, func, dataset_name, dataset in test_functions:
         repeat_count = getattr(func, 'genty_repeat_count', 0)
         if repeat_count:
-            for i in range(1, repeat_count + 1):
+            for i in xrange(1, repeat_count + 1):
                 repeat_suffix = _build_repeat_suffix(i, repeat_count)
                 yield name, func, dataset_name, dataset, repeat_suffix
         elif dataset:

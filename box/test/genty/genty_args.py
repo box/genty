@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from itertools import chain
+import six
 from box.test.genty.private import format_arg, format_kwarg
 
 
@@ -29,7 +30,7 @@ class GentyArgs(object):
         First, yield value of args in given order.
         Then yield kwargs in sorted order, formatted as key_equals_value.
         """
-        sorted_kwargs = sorted(self._kwargs.items())
+        sorted_kwargs = sorted(six.iteritems(self._kwargs))
         return chain(
             (format_arg(arg) for arg in self._args),
             (format_kwarg(k, v) for k, v in sorted_kwargs),

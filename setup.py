@@ -8,7 +8,7 @@ from sys import version_info
 
 def main():
     base_dir = dirname(__file__)
-    requirements = []
+    requirements = ['six']
     test_requirements = []
     if version_info[0] == 2 and version_info[1] == 6:
         requirements.append('ordereddict')

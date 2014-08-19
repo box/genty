@@ -3,8 +3,10 @@
 from __future__ import unicode_literals
 import functools
 import inspect
-from unittest import TestCase
 from mock import patch
+import six
+from six.moves import xrange  # pylint: disable=redefined-builtin,import-error
+from unittest import TestCase
 from box.test.genty import genty
 from box.test.genty import genty_dataset
 from box.test.genty import genty_repeat
@@ -103,9 +105,9 @@ class GentyTest(TestCase):
         instance = SomeClass()
 
         self.assertEqual(100, self._count_test_methods(SomeClass))
-        for i in range(1, 10):
+        for i in xrange(1, 10):
             self.assertTrue(hasattr(instance, 'test_repeat_100() iteration_00{0}'.format(i)))
-        for i in range(10, 100):
+        for i in xrange(10, 100):
             self.assertTrue(hasattr(instance, 'test_repeat_100() iteration_0{0}'.format(i)))
         self.assertTrue(hasattr(instance, 'test_repeat_100() iteration_100'))
 
@@ -161,16 +163,15 @@ class GentyTest(TestCase):
                     return func(*args, **kwargs)
                 return wrapped
 
-        @genty_dataset(100, 10)
-        def test_parent(_, val):
-            return val + 1
-
-        some_parent = genty(SomeMeta(str('SomeParent'), (object,), {
-            'test_parent': test_parent
-        }))
+        @genty
+        @six.add_metaclass(SomeMeta)
+        class SomeParent(object):
+            @genty_dataset(100, 10)
+            def test_parent(self, val):
+                return val + 1
 
         @genty
-        class SomeChild(some_parent):
+        class SomeChild(SomeParent):
             # pylint:disable=no-init
             @genty_dataset('a', 'b')
             def test_child(self, val):

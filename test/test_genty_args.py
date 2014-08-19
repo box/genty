@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
+import six
 from unittest import TestCase
 if not hasattr(TestCase, 'assertItemsEqual') and not hasattr(TestCase, 'assertCountEqual'):
     # Python 2.6 support
@@ -74,7 +75,7 @@ class GentyArgsTest(TestCase):
     )
     def test_genty_args_yields_kwargs(self, kwargs_dict):
         gargs = genty_args(**kwargs_dict)
-        for fruit, color in kwargs_dict.items():
+        for fruit, color in six.iteritems(kwargs_dict):
             self.assertIn('{0}={1}'.format(fruit, repr(color)), gargs)
 
     @genty_dataset(
@@ -83,7 +84,7 @@ class GentyArgsTest(TestCase):
     )
     def test_genty_args_yields_args_and_kwargs(self, args_tuple, kwargs_dict):
         gargs = genty_args(*args_tuple, **kwargs_dict)
-        for fruit, color in kwargs_dict.items():
+        for fruit, color in six.iteritems(kwargs_dict):
             self.assertIn('{0}={1}'.format(fruit, repr(color)), gargs)
         for arg in args_tuple:
             formatted_arg = format_arg(arg)
