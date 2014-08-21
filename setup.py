@@ -20,7 +20,7 @@ def main():
         namespace_packages=[b'box', b'box.test'],
         test_suite='test',
         zip_safe=False,
-        keywords='genty tests generative',
+        keywords=('genty', 'tests', 'generative'),
     )
 
 
