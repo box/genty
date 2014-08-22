@@ -313,3 +313,22 @@ class GentyTest(TestCase):
         unpatched_method = getattr(instance, 'test_unpatched_method(42)')
         self.assertEqual(44, patched_method())
         self.assertEqual(43, unpatched_method())
+
+    def test_genty_does_not_fail_when_trying_to_delete_attribute_defined_on_metaclass(self):
+        class SomeMeta(type):
+            def __new__(mcs, name, bases, attributes):
+                attributes['test_defined_in_metaclass'] = genty_dataset('foo')(mcs.test_defined_in_metaclass)
+                generated_class = super(SomeMeta, mcs).__new__(mcs, name, bases, attributes)
+                return generated_class
+
+            @staticmethod
+            def test_defined_in_metaclass():
+                pass
+
+        @genty
+        class SomeClass(object):
+            __metaclass__ = SomeMeta
+
+        instance = SomeClass()
+
+        self.assertIn('test_defined_in_metaclass({0})'.format(repr('foo')), dir(instance))

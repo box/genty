@@ -208,7 +208,10 @@ def _delete_original_test_method(target_cls, name):
     """
     attribute = getattr(target_cls, name, None)
     if attribute and not getattr(attribute, 'genty_generated_test', None):
-        delattr(target_cls, name)
+        try:
+            delattr(target_cls, name)
+        except AttributeError:
+            pass
         return True
     else:
         return False
