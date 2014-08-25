@@ -152,6 +152,7 @@ class GentyTest(TestCase):
                     if func_name.startswith('test') and callable(func):
                         setattr(cls, func_name, cls.wrap_method(func))
 
+                # pylint:disable=bad-super-call
                 super(SomeMeta, cls).__init__(name, bases, d)
 
             def wrap_method(cls, func):
