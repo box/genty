@@ -262,15 +262,16 @@ def _build_method_wrapper(method, dataset):
     if dataset:
         # Create the test method with the given data set.
         if isinstance(dataset, GentyArgs):
-            test_method_for_dataset = lambda my_self: method(
-                my_self,
-                *dataset.args,
+            test_method_for_dataset = lambda *my_self: method(
+                *(my_self + dataset.args),
                 **dataset.kwargs
             )
         else:
-            test_method_for_dataset = lambda my_self: method(my_self, *dataset)
+            test_method_for_dataset = lambda *my_self: method(
+                *(my_self + dataset)
+            )
     else:
-        test_method_for_dataset = lambda my_self: method(my_self)
+        test_method_for_dataset = lambda *my_self: method(*my_self)
     return test_method_for_dataset
 
 

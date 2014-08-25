@@ -152,6 +152,7 @@ class GentyTest(TestCase):
                     if func_name.startswith('test') and callable(func):
                         setattr(cls, func_name, cls.wrap_method(func))
 
+                # pylint:disable=bad-super-call
                 super(SomeMeta, cls).__init__(name, bases, d)
 
             def wrap_method(cls, func):
@@ -291,3 +292,27 @@ class GentyTest(TestCase):
                 33,
                 getattr(instance, 'test_unicode({})'.format(repr(char)))()
             )
+
+    def test_genty_properly_calls_patched_methods(self):
+        class PatchableClass(object):
+            @staticmethod
+            def my_method(num):
+                return num + 1
+
+        @genty
+        class SomeClass(object):
+            @genty_dataset(42)
+            @patch.object(PatchableClass, 'my_method')
+            def test_patched_method(self, num, mocked_method):
+                mocked_method.return_value = num + 2
+                return PatchableClass.my_method(num)
+
+            @genty_dataset(42)
+            def test_unpatched_method(self, num):
+                return PatchableClass.my_method(num)
+
+        instance = SomeClass()
+        patched_method = getattr(instance, 'test_patched_method(42)')
+        unpatched_method = getattr(instance, 'test_unpatched_method(42)')
+        self.assertEqual(44, patched_method())
+        self.assertEqual(43, unpatched_method())
