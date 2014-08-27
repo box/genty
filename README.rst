@@ -22,9 +22,9 @@ vs.
 .. code-block:: python
     from box.test.genty import genty, genty_dataset, genty_args
 
-In version 0.4.0, however, you will no longer be able to import genty from box.test.
+In version 1.0.0, however, you will no longer be able to import genty from box.test.
 
-about
+About
 -----
 
 Genty, pronounced "gen-tee", stands for "generate tests". It promotes generative 
