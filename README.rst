@@ -19,7 +19,7 @@ the tests:
 
 .. code-block:: python
 
-    from box.test.genty import genty, genty_repeat, genty_dataset
+    from genty import genty, genty_repeat, genty_dataset
     from unittest import TestCase
 
     # Here's the class under test
