@@ -318,6 +318,7 @@ class GentyTest(TestCase):
         class SomeMeta(type):
             def __new__(mcs, name, bases, attributes):
                 attributes['test_defined_in_metaclass'] = genty_dataset('foo')(mcs.test_defined_in_metaclass)
+                # pylint:disable=bad-super-call
                 generated_class = super(SomeMeta, mcs).__new__(mcs, name, bases, attributes)
                 return generated_class
 
