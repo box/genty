@@ -9,7 +9,7 @@ def main():
     base_dir = dirname(__file__)
     setup(
         name='genty',
-        version='0.3.0',
+        version='0.3.1',
         description='Allows you to run a test with multiple data sets',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
