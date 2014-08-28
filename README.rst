@@ -10,6 +10,28 @@ genty
 .. image:: https://pypip.in/d/genty/badge.png
     :target: https://pypi.python.org/pypi/genty
 
+Upcoming Breaking Change!
+-------------------------
+
+When Genty was released through version 0.2.0, it was released under the namespace
+box.test. In version 0.3.0, importing genty became easier:
+
+.. code-block:: python
+
+    from genty import genty, genty_dataset, genty_args
+
+vs.
+
+.. code-block:: python
+
+    from box.test.genty import genty, genty_dataset, genty_args
+    from box.test.genty.genty_args import genty_args
+
+In version 1.0.0, however, you will no longer be able to import genty from box.test.
+
+About
+-----
+
 Genty, pronounced "gen-tee", stands for "generate tests". It promotes generative 
 testing, where a single test can execute over a variety of input. Genty makes
 this a breeze.

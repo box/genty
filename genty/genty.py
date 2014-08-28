@@ -6,7 +6,7 @@ import math
 import types
 import re
 import sys
-from box.test.genty.genty_args import GentyArgs
+from .genty_args import GentyArgs
 
 
 def genty(target_cls):
