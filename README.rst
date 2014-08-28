@@ -18,14 +18,14 @@ box.test. In version 0.3.0, importing genty became easier:
 
 .. code-block:: python
 
-    from genty import genty, genty_dataset
-    from genty.genty_args import genty_args
+    from genty import genty, genty_dataset, genty_args
 
 vs.
 
 .. code-block:: python
 
     from box.test.genty import genty, genty_dataset, genty_args
+    from box.test.genty.genty_args import genty_args
 
 In version 1.0.0, however, you will no longer be able to import genty from box.test.
 
