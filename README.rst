@@ -82,7 +82,7 @@ It produces maintainable tests.
 It produces expressive tests.
 
 Another option is running the same test multiple times. This is useful in stress
-tests or when excerising code looking for race conditions. This particular test
+tests or when exercising code looking for race conditions. This particular test
 
 .. code-block:: python
 
