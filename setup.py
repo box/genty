@@ -9,7 +9,7 @@ def main():
     base_dir = dirname(__file__)
     setup(
         name='genty',
-        version='0.3.1',
+        version='1.0.0',
         description='Allows you to run a test with multiple data sets',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -17,7 +17,6 @@ def main():
         url='https://github.com/box/genty',
         license=open(join(base_dir, 'LICENSE')).read(),
         packages=find_packages(exclude=['test']),
-        namespace_packages=[b'box', b'box.test'],
         test_suite='test',
         zip_safe=False,
         keywords=('genty', 'tests', 'generative'),
