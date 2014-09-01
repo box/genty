@@ -5,8 +5,10 @@ import functools
 import math
 import types
 import re
+import six
 import sys
 from .genty_args import GentyArgs
+from .private import encode_non_ascii_string
 
 
 def genty(target_cls):
@@ -43,8 +45,8 @@ def _expand_tests(target_cls):
     :rtype:
         `generator` of `tuple` of (`unicode`, `function`)
     """
-    entries = dict(target_cls.__dict__.iteritems())
-    for key, value in entries.iteritems():
+    entries = dict(six.iteritems(target_cls.__dict__))
+    for key, value in six.iteritems(entries):
         if key.startswith('test') and isinstance(value, types.FunctionType):
             if not hasattr(value, 'genty_generated_test'):
                 yield key, value
@@ -68,7 +70,7 @@ def _expand_datasets(test_functions):
     for name, func in test_functions:
         datasets = getattr(func, 'genty_datasets', {})
         if datasets:
-            for dataset_name, dataset in datasets.iteritems():
+            for dataset_name, dataset in six.iteritems(datasets):
                 yield name, func, dataset_name, dataset
         else:
             yield name, func, None, None
@@ -94,7 +96,7 @@ def _expand_repeats(test_functions):
     for name, func, dataset_name, dataset in test_functions:
         repeat_count = getattr(func, 'genty_repeat_count', 0)
         if repeat_count:
-            for i in xrange(1, repeat_count + 1):
+            for i in range(1, repeat_count + 1):
                 repeat_suffix = _build_repeat_suffix(i, repeat_count)
                 yield name, func, dataset_name, dataset, repeat_suffix
         elif dataset:
@@ -159,7 +161,7 @@ def _is_referenced_in_argv(method_name):
     :rtype:
         `bool`
     """
-    expr = '.*[:.]{}$'.format(method_name)
+    expr = '.*[:.]{0}$'.format(method_name)
     regex = re.compile(expr)
     return any(regex.match(arg) for arg in sys.argv)
 
@@ -185,7 +187,10 @@ def _build_repeat_suffix(iteration, count):
         `unicode`
     """
     format_width = int(math.ceil(math.log(count + 1, 10)))
-    new_suffix = 'iteration_{:0{width}d}'.format(iteration, width=format_width)
+    new_suffix = 'iteration_{0:0{width}d}'.format(
+        iteration,
+        width=format_width
+    )
     return new_suffix
 
 
@@ -248,12 +253,12 @@ def _build_final_method_name(method_name, dataset_name, repeat_suffix):
         return method_name
 
     # Place data_set info inside parens, as if it were a function call
-    test_method_suffix = '({})'.format(dataset_name or "")
+    test_method_suffix = '({0})'.format(dataset_name or "")
 
     if repeat_suffix:
         test_method_suffix = test_method_suffix + " " + repeat_suffix
 
-    test_method_name_for_dataset = "{}{}".format(
+    test_method_name_for_dataset = "{0}{1}".format(
         method_name,
         test_method_suffix,
     )
@@ -327,9 +332,8 @@ def _add_method_to_class(
         func,
     )
 
-    test_method_name_for_dataset = test_method_name_for_dataset.encode(
-        'utf-8',
-        'replace',
+    test_method_name_for_dataset = encode_non_ascii_string(
+        test_method_name_for_dataset,
     )
     test_method_for_dataset.__name__ = test_method_name_for_dataset
     test_method_for_dataset.genty_generated_test = True
