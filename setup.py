@@ -8,7 +8,7 @@ from sys import version_info
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
     'Intended Audience :: Developers',
-    'License :: OSI Approved :: Apache License',
+    'License :: OSI Approved :: Apache Software License',
     'Topic :: Software Development',
     'Programming Language :: Python',
     'Programming Language :: Python :: 2.7',
