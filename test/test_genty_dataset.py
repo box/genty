@@ -25,7 +25,7 @@ class GentyDatasetTest(TestCase):
 
         # Assert that the expected 'name' with expected value is created.
         self.assertEqual(
-            {"u'a', u'b'": ('a', 'b')},
+            {"{0}, {1}".format(repr('a'), repr('b')): ('a', 'b')},
             some_func.genty_datasets,
         )
 
@@ -39,7 +39,7 @@ class GentyDatasetTest(TestCase):
 
         # Assert that the expected 'names' with expected values are created.
         self.assertEqual(
-            {"u'a', u'b'": ('a', 'b'), "100, 200, u'300'": (100, 200, '300')},
+            {"{0}, {1}".format(repr('a'), repr('b')): ('a', 'b'), "100, 200, {0}".format(repr('300')): (100, 200, '300')},
             some_func.genty_datasets,
         )
 
@@ -85,8 +85,8 @@ class GentyDatasetTest(TestCase):
         # Assert that the expected 'name' with expected value is created.
         self.assertEqual(
             {
-                "u'a', 53": ('a', 53),
-                "u'p', 54, 100": ('p', 54, 100),
+                "{0}, 53".format(repr('a')): ('a', 53),
+                "{0}, 54, 100".format(repr('p')): ('p', 54, 100),
                 "a_third_case": ('y',),
             },
             some_func.genty_datasets,
@@ -101,7 +101,7 @@ class GentyDatasetTest(TestCase):
 
         # Assert that the expected 'names' with expected values are created.
         self.assertEqual(
-            {"{}, {}".format(repr('ĥȅľľő'), repr('ġőőďƄŷȅ')): ('ĥȅľľő', 'ġőőďƄŷȅ')},
+            {"{0}, {1}".format(repr('ĥȅľľő'), repr('ġőőďƄŷȅ')): ('ĥȅľľő', 'ġőőďƄŷȅ')},
             some_func.genty_datasets,
         )
 

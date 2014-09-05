@@ -26,7 +26,7 @@ def genty_repeat(count):
     """
     if count < 0:
         raise ValueError(
-            "Really? Can't have {} iterations. Please pick a value >= 0."
+            "Really? Can't have {0} iterations. Please pick a value >= 0."
             .format(count)
         )
 

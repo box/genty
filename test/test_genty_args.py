@@ -1,9 +1,12 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from unittest import TestCase
+import six
 
 from genty import genty_dataset, genty, genty_args
+from genty.private import format_arg
+
+from test.base_test_case import TestCase
 
 
 @genty
@@ -46,7 +49,7 @@ class GentyArgsTest(TestCase):
         gargs = genty_args(*args)
         self.assertItemsEqual(
             gargs,
-            (repr(arg) if isinstance(arg, basestring) else unicode(arg) for arg in args),
+            (format_arg(arg) for arg in args),
         )
 
     @genty_dataset(
@@ -58,8 +61,8 @@ class GentyArgsTest(TestCase):
     )
     def test_genty_args_yields_kwargs(self, kwargs_dict):
         gargs = genty_args(**kwargs_dict)
-        for fruit, color in kwargs_dict.iteritems():
-            self.assertIn('{}={}'.format(fruit, repr(color)), gargs)
+        for fruit, color in six.iteritems(kwargs_dict):
+            self.assertIn('{0}={1}'.format(fruit, repr(color)), gargs)
 
     @genty_dataset(
         ((4, 3, 2), {'orange': 'orange', 'banana': 'yellow'}),
@@ -67,8 +70,8 @@ class GentyArgsTest(TestCase):
     )
     def test_genty_args_yields_args_and_kwargs(self, args_tuple, kwargs_dict):
         gargs = genty_args(*args_tuple, **kwargs_dict)
-        for fruit, color in kwargs_dict.iteritems():
-            self.assertIn('{}={}'.format(fruit, repr(color)), gargs)
+        for fruit, color in six.iteritems(kwargs_dict):
+            self.assertIn('{0}={1}'.format(fruit, repr(color)), gargs)
         for arg in args_tuple:
-            formatted_arg = repr(arg) if isinstance(arg, basestring) else unicode(arg)
+            formatted_arg = format_arg(arg)
             self.assertIn(formatted_arg, gargs)

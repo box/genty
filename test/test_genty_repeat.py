@@ -1,8 +1,8 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from unittest import TestCase
 from genty import genty_repeat
+from test.base_test_case import TestCase
 
 
 class GentyRepeatTest(TestCase):
@@ -31,7 +31,7 @@ class GentyRepeatTest(TestCase):
             def _():
                 pass
 
-        self.assertIn('Please pick a value >= 0', context.exception.message)
+        self.assertIn('Please pick a value >= 0', str(context.exception))
 
     def test_repeat_allows_zero_iterations(self):
         @genty_repeat(0)

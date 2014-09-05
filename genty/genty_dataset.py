@@ -1,7 +1,13 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    # pylint:disable=import-error
+    from ordereddict import OrderedDict
+    # pylint:enable=import-error
+import six
 from .genty_args import GentyArgs
 from .private import format_arg
 
@@ -144,5 +150,5 @@ def _add_kwarg_datasets(datasets, kwargs):
     :type kwargs:
         `dict` of `unicode` to varies
     """
-    for test_method_suffix, dataset in kwargs.iteritems():
+    for test_method_suffix, dataset in six.iteritems(kwargs):
         datasets[test_method_suffix] = dataset
