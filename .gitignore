@@ -31,8 +31,7 @@ htmlcov/
 *.mo
 
 # IntelliJ
-.idea/tasks.xml
-.idea/workspace.xml
+.idea
 
 # Mac noise
 .DS_Store
