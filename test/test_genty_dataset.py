@@ -109,6 +109,18 @@ class GentyDatasetTest(TestCase):
             some_func.genty_datasets,
         )
 
+    def test_outer_key_value_overrides_inner_in_chained_datasets(self):
+        @genty_dataset(named_set=(99,))
+        @genty_dataset(named_set=(100,))
+        def some_func():
+            pass
+
+        # Assert that the outer value of '99' is the solitary dataset.
+        self.assertEqual(
+            {"named_set": (99,)},
+            some_func.genty_datasets,
+        )
+
     def test_unicode_name_is_safely_converted(self):
         @genty_dataset(
             ('ĥȅľľő', 'ġőőďƄŷȅ'),
