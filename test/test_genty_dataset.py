@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 from unittest import TestCase
 
-from genty import genty_dataset
+from genty import genty_dataset, genty_deferred
 
 
 class GentyDatasetTest(TestCase):
@@ -151,4 +151,52 @@ class GentyDatasetTest(TestCase):
         self.assertEqual(
             {'some-class string': (instance,)},
             some_func.genty_datasets,
+        )
+
+    def test_deferred_dataset_are_added_to_test_method(self):
+        @genty_dataset(named_set_one=(99,))
+        @genty_dataset(
+            (5, 6),
+            named_set_two=(100,),
+        )
+        def builder():
+            pass
+
+        @genty_deferred(builder)
+        def test_method():
+            pass
+
+        # Assert that test_method acquires the expected datasets, including
+        # the reference to the builder function.
+        self.assertEqual(
+            [(
+                builder,
+                {
+                    "5, 6": (5, 6),
+                    "named_set_one": (99,),
+                    "named_set_two": (100,),
+                }
+            )],
+            test_method.genty_deferred_datasets,
+        )
+
+    def test_deferred_and_normal_datasets_can_mix(self):
+        @genty_dataset((5, 6))
+        def builder():
+            pass
+
+        @genty_deferred(builder)
+        @genty_dataset((55, 66))
+        def test_method():
+            pass
+
+        # Assert that both deferred & non-deferred datasets are attached
+        # to the test method.
+        self.assertEqual(
+            [(builder, {"5, 6": (5, 6)})],
+            test_method.genty_deferred_datasets,
+        )
+        self.assertEqual(
+            {"55, 66": (55, 66)},
+            test_method.genty_datasets,
         )
