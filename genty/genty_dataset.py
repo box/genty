@@ -69,6 +69,13 @@ def genty_dataset(*args, **kwargs):
         def test_function(a, b)
             ...
 
+    Finally, datasets can be chained. Useful for example if there are
+    distinct sets of params that make sense if kept separate.
+        @genty_dataset('c1', 'c2')
+        @genty_dataset('c33', 'c44')
+        def test_some_other_function(c)
+            ...
+
     :param args:
         Tuple of unnamed data sets.
     :type args:
@@ -83,7 +90,11 @@ def genty_dataset(*args, **kwargs):
     def wrap(test_method):
         # Save the datasets in the test method. This data will be consumed
         # by the @genty decorator.
-        test_method.genty_datasets = datasets
+        if not hasattr(test_method, 'genty_datasets'):
+            test_method.genty_datasets = OrderedDict()
+
+        test_method.genty_datasets.update(datasets)
+
         return test_method
     return wrap
 
