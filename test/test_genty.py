@@ -46,6 +46,16 @@ class GentyTest(TestCase):
 
         self.assertEqual(15, SomeClass().test_undecorated())
 
+    def test_genty_decorates_test_with_args(self):
+        @genty
+        class SomeClass(object):
+            @genty_dataset((4, 7))
+            def test_decorated(self, aval, bval):
+                return aval + bval
+
+        instance = SomeClass()
+        self.assertEqual(11, getattr(instance, 'test_decorated(4, 7)')())
+
     def test_genty_replicates_method_based_on_repeat_count(self):
         @genty
         class SomeClass(object):
