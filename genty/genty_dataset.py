@@ -86,7 +86,9 @@ def genty_dataset(*args, **kwargs):
         def test_some_other_function(param1, param2=None)
             ...
 
-    If
+    If the names of datasets conflict across chained genty_datasets, the
+    key&value pair from the outer (first) decorator will override the
+    data from the inner.
 
     :param args:
         Tuple of unnamed data sets.
