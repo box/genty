@@ -72,7 +72,7 @@ class GentyTest(TestCase):
             (11, 3, 7),
             getattr(
                 instance,
-                'test_decorated_{}(7, 4)'.format('my_param_factory'),
+                'test_decorated_{0}(7, 4)'.format('my_param_factory'),
             )(),
         )
 
@@ -94,7 +94,7 @@ class GentyTest(TestCase):
             (20, 10, 15),
             getattr(
                 instance,
-                'test_decorated_{}(first=15, second=5)'.format('my_param_factory'),
+                'test_decorated_{0}(first=15, second=5)'.format('my_param_factory'),
             )(),
         )
 
@@ -115,7 +115,7 @@ class GentyTest(TestCase):
             (11, 11, 3, 3),
             getattr(
                 instance,
-                'test_decorated_{}(7, 4)'.format('my_param_factory'),
+                'test_decorated_{0}(7, 4)'.format('my_param_factory'),
             )(),
         )
         self.assertEqual(
