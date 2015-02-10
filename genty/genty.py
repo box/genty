@@ -13,10 +13,10 @@ from .private import encode_non_ascii_string
 
 
 def genty(target_cls):
-    """Decorator used in conjunction with @genty_dataset and @genty_repeat.
-
-    This decorator takes the information provided by @genty_dataset and
-    @genty_repeat and generates the corresponding test methods.
+    """
+    This decorator takes the information provided by @genty_dataset,
+    @genty_deferred, and @genty_repeat and generates the corresponding
+    test methods.
 
     :param target_cls:
         Test class whose test methods have been decorated.
