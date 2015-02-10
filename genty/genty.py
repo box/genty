@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import functools
+from itertools import chain
 import math
 import types
 import re
@@ -68,22 +69,29 @@ def _expand_datasets(test_functions):
         - dataset          : Tuple representing the args for a test
         - param factory    : Function that returns params for the test method
     :rtype:
-        `generator` of `tuple` of
-        (`unicode`, `function`, `unicode` or None, `tuple` or None, `function`)
+        `generator` of `tuple` of (
+            `unicode`,
+            `function`,
+            `unicode` or None,
+            `tuple` or None,
+            `function` or None,
+        )
     """
     for name, func in test_functions:
-        datasets = getattr(func, 'genty_datasets', {})
-        if datasets:
+
+        dataset_tuples = chain(
+            [(None, getattr(func, 'genty_datasets', {}))],
+            getattr(func, 'genty_deferred_datasets', []),
+        )
+
+        no_datasets = True
+        for param_factory, datasets in dataset_tuples:
             for dataset_name, dataset in six.iteritems(datasets):
-                yield name, func, dataset_name, dataset, None
+                no_datasets = False
+                yield name, func, dataset_name, dataset, param_factory
 
-        deferred_datasets = getattr(func, 'genty_deferred_datasets', [])
-        if deferred_datasets:
-            for param_factory, datasets in deferred_datasets:
-                for dataset_name, dataset in six.iteritems(datasets):
-                    yield name, func, dataset_name, dataset, param_factory
-
-        if not (datasets or deferred_datasets):
+        if no_datasets:
+            # yield the original test method, unaltered
             yield name, func, None, None, None
 
 
