@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import functools
+from itertools import chain
 import math
 import types
 import re
@@ -12,10 +13,10 @@ from .private import encode_non_ascii_string
 
 
 def genty(target_cls):
-    """Decorator used in conjunction with @genty_dataset and @genty_repeat.
-
-    This decorator takes the information provided by @genty_dataset and
-    @genty_repeat and generates the corresponding test methods.
+    """
+    This decorator takes the information provided by @genty_dataset,
+    @genty_deferred, and @genty_repeat and generates the corresponding
+    test methods.
 
     :param target_cls:
         Test class whose test methods have been decorated.
@@ -62,18 +63,36 @@ def _expand_datasets(test_functions):
         `iterator` of `tuple` of (`unicode`, `function`)
     :return:
         Generator yielding a tuple of
-        (method_name, unbound function, dataset name, dataset)
+        - method_name      : Name of the test method
+        - unbound function : Unbound function that will be the test method.
+        - dataset name     : String representation of the given dataset
+        - dataset          : Tuple representing the args for a test
+        - param factory    : Function that returns params for the test method
     :rtype:
-        `generator` of `tuple` of
-        (`unicode`, `function`, `unicode` or None, `tuple` or None)
+        `generator` of `tuple` of (
+            `unicode`,
+            `function`,
+            `unicode` or None,
+            `tuple` or None,
+            `function` or None,
+        )
     """
     for name, func in test_functions:
-        datasets = getattr(func, 'genty_datasets', {})
-        if datasets:
+
+        dataset_tuples = chain(
+            [(None, getattr(func, 'genty_datasets', {}))],
+            getattr(func, 'genty_deferred_datasets', []),
+        )
+
+        no_datasets = True
+        for param_factory, datasets in dataset_tuples:
             for dataset_name, dataset in six.iteritems(datasets):
-                yield name, func, dataset_name, dataset
-        else:
-            yield name, func, None, None
+                no_datasets = False
+                yield name, func, dataset_name, dataset, param_factory
+
+        if no_datasets:
+            # yield the original test method, unaltered
+            yield name, func, None, None, None
 
 
 def _expand_repeats(test_functions):
@@ -82,25 +101,36 @@ def _expand_repeats(test_functions):
 
     :param test_functions:
         Sequence of tuples of
-        (test_method_name, test unbound function, dataset name, dataset)
+        - method_name      : Name of the test method
+        - unbound function : Unbound function that will be the test method.
+        - dataset name     : String representation of the given dataset
+        - dataset          : Tuple representing the args for a test
+        - param factory    : Function that returns params for the test method
     :type test_functions:
         `iterator` of `tuple` of
-        (`unicode`, `function`, `unicode` or None, `tuple` or None)
+        (`unicode`, `function`, `unicode` or None, `tuple` or None, `function`)
     :return:
         Generator yielding a tuple of
         (method_name, unbound function, dataset, name dataset, repeat_suffix)
     :rtype:
         `generator` of `tuple` of (`unicode`, `function`,
-        `unicode` or None, `tuple` or None, `unicode`)
+        `unicode` or None, `tuple` or None, `function`, `unicode`)
     """
-    for name, func, dataset_name, dataset in test_functions:
+    for name, func, dataset_name, dataset, param_factory in test_functions:
         repeat_count = getattr(func, 'genty_repeat_count', 0)
         if repeat_count:
             for i in range(1, repeat_count + 1):
                 repeat_suffix = _build_repeat_suffix(i, repeat_count)
-                yield name, func, dataset_name, dataset, repeat_suffix
+                yield (
+                    name,
+                    func,
+                    dataset_name,
+                    dataset,
+                    param_factory,
+                    repeat_suffix,
+                )
         elif dataset:
-            yield name, func, dataset_name, dataset, None
+            yield name, func, dataset_name, dataset, param_factory, None
 
 
 def _add_new_test_methods(target_cls, tests_with_datasets_and_repeats):
@@ -112,13 +142,21 @@ def _add_new_test_methods(target_cls, tests_with_datasets_and_repeats):
         `class`
     :param tests_with_datasets_and_repeats:
         Sequence of tuples describing the new test to add to the class.
-        (method_name, unbound function, dataset name, dataset , repeat_suffix)
+        (method_name, unbound function, dataset name, dataset,
+         param_factory, repeat_suffix)
     :type tests_with_datasets_and_repeats:
         Sequence of `tuple` of  (`unicode`, `function`,
-        `unicode` or None, `tuple` or None, `unicode`)
+        `unicode` or None, `tuple` or None, `function`, `unicode`)
     """
     for test_info in tests_with_datasets_and_repeats:
-        method_name, func, dataset_name, dataset, repeat_suffix = test_info
+        (
+            method_name,
+            func,
+            dataset_name,
+            dataset,
+            param_factory,
+            repeat_suffix,
+        ) = test_info
 
         # Remove the original test_method as it's superseded by this
         # generated method.
@@ -141,6 +179,7 @@ def _add_new_test_methods(target_cls, tests_with_datasets_and_repeats):
             func,
             dataset_name,
             dataset,
+            param_factory,
             repeat_suffix,
         )
 
@@ -222,7 +261,12 @@ def _delete_original_test_method(target_cls, name):
         return False
 
 
-def _build_final_method_name(method_name, dataset_name, repeat_suffix):
+def _build_final_method_name(
+        method_name,
+        dataset_name,
+        param_factory_name,
+        repeat_suffix,
+):
     """
     Return a nice human friendly name, that almost looks like code.
 
@@ -240,6 +284,10 @@ def _build_final_method_name(method_name, dataset_name, repeat_suffix):
         Base name of the data set.
     :type dataset_name:
         `unicode` or None
+    :param param_factory_name:
+        If there's a param_factory involved, then this is its name.
+    :type param_factory_name:
+        `unicode` or None
     :param repeat_suffix:
         Suffix to append to the name of the generated method.
     :type repeat_suffix:
@@ -252,35 +300,124 @@ def _build_final_method_name(method_name, dataset_name, repeat_suffix):
     if not dataset_name and not repeat_suffix:
         return method_name
 
+    suffix = ''
+
+    # For tests using a param_factory, append "_<param_factory_name>" to
+    #  the test method name
+    if param_factory_name:
+        suffix = '_{0}'.format(param_factory_name)
+
     # Place data_set info inside parens, as if it were a function call
-    test_method_suffix = '({0})'.format(dataset_name or "")
+    suffix = '{0}({1})'.format(suffix, dataset_name or "")
 
     if repeat_suffix:
-        test_method_suffix = test_method_suffix + " " + repeat_suffix
+        suffix = '{0} {1}'.format(suffix, repeat_suffix)
 
     test_method_name_for_dataset = "{0}{1}".format(
         method_name,
-        test_method_suffix,
+        suffix,
     )
 
     return test_method_name_for_dataset
 
 
-def _build_method_wrapper(method, dataset):
-    if dataset:
-        # Create the test method with the given data set.
-        if isinstance(dataset, GentyArgs):
-            test_method_for_dataset = lambda my_self: method(
-                *((my_self,) + dataset.args),
-                **dataset.kwargs
-            )
-        else:
-            test_method_for_dataset = lambda my_self: method(
-                *((my_self,) + dataset)
-            )
+def _build_non_deferred_method(method, dataset):
+    """
+    Return a fabricated method that marshals the dataset into parameters
+    for given 'method'
+    :param method:
+        The underlying test method.
+    :type method:
+        `callable`
+    :param dataset:
+        Tuple or GentyArgs instance containing the args of the dataset.
+    :type dataset:
+        `tuple` or :class:`GentyArgs`
+    :return:
+        Return an unbound function that will become a test method
+    :rtype:
+        `function`
+    """
+    if isinstance(dataset, GentyArgs):
+        test_method = lambda my_self: method(
+            my_self,
+            *dataset.args,
+            **dataset.kwargs
+        )
     else:
-        test_method_for_dataset = lambda my_self: method(my_self)
-    return test_method_for_dataset
+        test_method = lambda my_self: method(
+            my_self,
+            *dataset
+        )
+    return test_method
+
+
+def _build_deferred_method(method, dataset, param_factory):
+    """
+    Return a fabricated method that calls the param_factory with the given
+    dataset, and marshals the return value from that into params to the
+    underlying test 'method'.
+    :param method:
+        The underlying test method.
+    :type method:
+        `callable`
+    :param dataset:
+        Tuple or GentyArgs instance containing the args of the dataset.
+    :type dataset:
+        `tuple` or :class:`GentyArgs`
+    :param param_factory:
+        The unbound function that's responsible for generating the actual
+        params that will be passed to the test function.
+    :type param_factory:
+        `callable`
+    :return:
+        Return an unbound function that will become a test method
+    :rtype:
+        `function`
+    """
+    if isinstance(dataset, GentyArgs):
+        test_method = lambda my_self: method(
+            my_self,
+            *param_factory(my_self, *dataset.args, **dataset.kwargs)
+        )
+    else:
+        test_method = lambda my_self: method(
+            my_self,
+            *param_factory(my_self, *dataset)
+        )
+    return test_method
+
+
+def _build_test_method(method, dataset, param_factory=None):
+    """
+    Return a fabricated method that marshals the dataset into parameters
+    for given 'method'
+    :param method:
+        The underlying test method.
+    :type method:
+        `callable`
+    :param dataset:
+        Tuple or GentyArgs instance containing the args of the dataset.
+    :type dataset:
+        `tuple` or :class:`GentyArgs` or None
+    :param param_factory:
+        The unbound function that's responsible for generating the actual
+        params that will be passed to the test function. None if the
+        given dataset isn't associated with a "deferred" dataset.
+    :type param_factory:
+        `callable` or None
+    :return:
+        Return an unbound function that will become a test method
+    :rtype:
+        `function`
+    """
+    if dataset and param_factory:
+        test_method = _build_deferred_method(method, dataset, param_factory)
+    elif dataset:
+        test_method = _build_non_deferred_method(method, dataset)
+    else:
+        test_method = lambda my_self: method(my_self)
+    return test_method
 
 
 def _add_method_to_class(
@@ -289,6 +426,7 @@ def _add_method_to_class(
         func,
         dataset_name,
         dataset,
+        param_factory,
         repeat_suffix,
 ):
     """
@@ -303,7 +441,7 @@ def _add_method_to_class(
     :type method_name:
         `unicode`
     :param func:
-        The test function to add.
+        The underlying test function to call.
     :type func:
         `callable`
     :param dataset_name:
@@ -318,14 +456,22 @@ def _add_method_to_class(
         Suffix to append to the name of the generated method.
     :type repeat_suffix:
         `unicode` or None
+    :param param_factory:
+        The unbound function that's responsible for generating the actual
+        params that will be passed to the test function. None if the
+        given dataset isn't associated with a "deferred" dataset.
+    :type param_factory:
+        `callable`
     """
+    # pylint: disable=too-many-arguments
     test_method_name_for_dataset = _build_final_method_name(
         method_name,
         dataset_name,
+        param_factory.__name__ if param_factory else None,
         repeat_suffix,
     )
 
-    test_method_for_dataset = _build_method_wrapper(func, dataset)
+    test_method_for_dataset = _build_test_method(func, dataset, param_factory)
 
     test_method_for_dataset = functools.update_wrapper(
         test_method_for_dataset,

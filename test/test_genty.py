@@ -5,7 +5,7 @@ import functools
 import inspect
 from mock import patch
 import six
-from genty import genty, genty_args, genty_dataset, genty_repeat
+from genty import genty, genty_args, genty_dataset, genty_repeat, genty_deferred
 from genty.private import encode_non_ascii_string
 from test.base_test_case import TestCase
 
@@ -55,6 +55,77 @@ class GentyTest(TestCase):
 
         instance = SomeClass()
         self.assertEqual(11, getattr(instance, 'test_decorated(4, 7)')())
+
+    def test_genty_decorates_with_deferred_args(self):
+        @genty
+        class SomeClass(object):
+            @genty_dataset((7, 4))
+            def my_param_factory(self, first, second):
+                return first + second, first - second, max(first, second)
+
+            @genty_deferred(my_param_factory)
+            def test_decorated(self, summation, difference, maximum):
+                return summation, difference, maximum
+
+        instance = SomeClass()
+        self.assertEqual(
+            (11, 3, 7),
+            getattr(
+                instance,
+                'test_decorated_{0}(7, 4)'.format('my_param_factory'),
+            )(),
+        )
+
+    def test_deferred_args_can_use_gentry_args(self):
+        @genty
+        class SomeClass(object):
+            @genty_dataset(
+                genty_args(second=5, first=15),
+            )
+            def my_param_factory(self, first, second):
+                return first + second, first - second, max(first, second)
+
+            @genty_deferred(my_param_factory)
+            def test_decorated(self, summation, difference, maximum):
+                return summation, difference, maximum
+
+        instance = SomeClass()
+        self.assertEqual(
+            (20, 10, 15),
+            getattr(
+                instance,
+                'test_decorated_{0}(first=15, second=5)'.format('my_param_factory'),
+            )(),
+        )
+
+    def test_deferred_and_non_deferred_datasets_can_mix(self):
+        @genty
+        class SomeClass(object):
+            @genty_dataset((7, 4))
+            def my_param_factory(self, first, second):
+                return first + second, first - second
+
+            @genty_deferred(my_param_factory)
+            @genty_dataset((7, 4), (11, 3))
+            def test_decorated(self, param1, param2):
+                return param1, param1, param2, param2
+
+        instance = SomeClass()
+        self.assertEqual(
+            (11, 11, 3, 3),
+            getattr(
+                instance,
+                'test_decorated_{0}(7, 4)'.format('my_param_factory'),
+            )(),
+        )
+        self.assertEqual(
+            (7, 7, 4, 4),
+            getattr(instance, 'test_decorated(7, 4)')(),
+        )
+        self.assertEqual(
+            (11, 11, 3, 3),
+            getattr(instance, 'test_decorated(11, 3)')(),
+        )
 
     def test_genty_replicates_method_based_on_repeat_count(self):
         @genty

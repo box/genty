@@ -12,6 +12,23 @@ from .genty_args import GentyArgs
 from .private import format_arg
 
 
+def genty_deferred(builder_function):
+    datasets = builder_function.genty_datasets
+
+    def wrap(test_method):
+        # Save the datasets in the test method. This data will be consumed
+        # by the @genty decorator.
+        if not hasattr(test_method, 'genty_deferred_datasets'):
+            test_method.genty_deferred_datasets = []
+
+        test_method.genty_deferred_datasets.append(
+            (builder_function, datasets),
+        )
+
+        return test_method
+    return wrap
+
+
 def genty_dataset(*args, **kwargs):
     """Decorator defining data sets to provide to a test.
 
