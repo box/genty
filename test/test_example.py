@@ -7,11 +7,18 @@ from __future__ import unicode_literals
 
 from itertools import product
 from unittest import TestCase
-from genty import genty, genty_repeat, genty_dataset, genty_args
+from genty import genty, genty_repeat, genty_dataset, genty_args, genty_deferred
 
 
 @genty
 class ExampleTests(TestCase):
+    def setUp(self):
+        super(ExampleTests, self).setUp()
+
+        # Imagine that _some_function is actually some http request that can
+        # only be called *after* authentication happens in this setUp method
+        self._some_function = lambda x, y: ((x + y), (x - y), x * y)
+
     @genty_repeat(10)
     def test_example_of_repeat(self):
         """This test will be run 10 times"""
@@ -50,3 +57,21 @@ class ExampleTests(TestCase):
     def test_example_of_repeat_and_datasets(self, parameter_value):
         """This test will be called 4 times for each of the 3 possible parameter_values"""
         pass
+
+    @genty_dataset(10, 100)
+    @genty_dataset('first', 'second', 'third')
+    def test_example_of_composing_datasets(self, parameter_value):
+        """This test will be called 5 times for each of the values in the 2 datasets above"""
+        pass
+
+    @genty_dataset((1000, 100), (100, 1))
+    def calculate(self, x_val, y_val):
+        return self._some_function(x_val, y_val)
+
+    @genty_deferred(calculate)
+    def test_heavy(self, data1, data2, data3):
+        """
+        This test will be called 2 times because it's 'deferred' provider of params - the calculate helper - has
+        a dataset with 2 sets of values
+        """
+

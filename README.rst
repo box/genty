@@ -61,7 +61,7 @@ the tests:
             self.assertEqual(expected_result, actual_result)
 
 
-Running the MyClassTests using the default unittest runner
+Running the ``MyClassTests`` using the default unittest runner
 
 .. code-block:: console
 
@@ -119,7 +119,7 @@ The 2 techniques can be combined:
             self.assertEqual(expected_result, actual_result)
             
 
-There are more options to explore including naming your datasets and genty_args.
+There are more options to explore including naming your datasets and ``genty_args``.
 
 .. code-block:: python
  
@@ -146,9 +146,75 @@ would run 3 tests, producing output like
 
     OK
 
-genty_args allow you to define the params to the test method as if it were being called 
-directly. Thus for complex tests with lots of parameters, one can take advantage of
-default values and named parameters.
+
+The ``@genty_datasets`` can be chained together. This is useful, for example, if there are semantically different datasets
+so keeping them separate would help expressiveness.
+
+
+.. code-block:: python
+
+	@genty_dataset(10, 100)
+	@genty_dataset('first', 'second')
+	def test_composing(self, parameter_value):
+		...
+
+
+would run 4 tests, producing output like
+
+.. code-block:: console
+
+    $ python -m unittest -v sample
+    test_composing(10) (sample.MyClassTests) ... ok
+    test_composing(100) (sample.MyClassTests) ... ok
+    test_composing(u'first') (sample.MyClassTests) ... ok
+    test_composing(u'second') (sample.MyClassTests) ... ok
+
+    ----------------------------------------------------------------------
+    Ran 4 tests in 0.000s
+
+    OK
+
+
+Sometimes the parameters to a test can't be determined at module load time. For example,
+some test might be based on results from some http request. And first the test needs to
+authenticate, etc. This is supported using the ``@genty_deferred`` decorator like so:
+
+
+.. code-block:: python
+
+    def setUp(self):
+        super(MyClassTests, self).setUp()
+        
+        # http authentication happens
+        # And image that _some_function is actually some http request
+        self._some_function = lambda x, y: ((x + y), (x - y), (x * y))
+
+    @genty_dataset((1000, 100), (100, 1))
+    def calculate(self, x_val, y_val):
+        # when this is called... we're been authenticated
+        return self._some_function(x_val, y_val)
+
+    @genty_deferred(calculate)
+    def test_heavy(self, data1, data2, data3):
+        ...
+
+
+would run 4 tests, producing output like
+
+.. code-block:: console
+
+
+	$ python -m unittest -v sample
+	test_heavy_calculate(100, 1) (sample.MyClassTests) ... ok
+	test_heavy_calculate(1000, 100) (sample.MyClassTests) ... ok
+
+	----------------------------------------------------------------------
+	Ran 2 tests in 0.000s
+
+	OK
+
+Notice here how the name of the helper (``calculate``) is added to the names of the 2
+executed test cases.
 
 Enjoy!
 
