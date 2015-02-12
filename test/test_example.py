@@ -74,4 +74,3 @@ class ExampleTests(TestCase):
         This test will be called 2 times because it's 'deferred' provider of params - the calculate helper - has
         a dataset with 2 sets of values
         """
-

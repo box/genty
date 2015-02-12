@@ -191,7 +191,7 @@ authenticate, etc. This is supported using the ``@genty_deferred`` decorator lik
 
     @genty_dataset((1000, 100), (100, 1))
     def calculate(self, x_val, y_val):
-        # when this is called... we're been authenticated
+        # when this is called... we've been authenticated
         return self._some_function(x_val, y_val)
 
     @genty_deferred(calculate)
@@ -215,6 +215,8 @@ would run 4 tests, producing output like
 
 Notice here how the name of the helper (``calculate``) is added to the names of the 2
 executed test cases.
+
+Like ``@genty_dataset``, ``@genty_deferred`` can be chained together.
 
 Enjoy!
 
