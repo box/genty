@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 
 from itertools import product
 from unittest import TestCase
-from genty import genty, genty_repeat, genty_dataset, genty_args, genty_deferred
+from genty import genty, genty_repeat, genty_dataset, genty_args, genty_dataprovider
 
 
 @genty
@@ -68,9 +68,9 @@ class ExampleTests(TestCase):
     def calculate(self, x_val, y_val):
         return self._some_function(x_val, y_val)
 
-    @genty_deferred(calculate)
+    @genty_dataprovider(calculate)
     def test_heavy(self, data1, data2, data3):
         """
-        This test will be called 2 times because it's 'deferred' provider of params - the calculate helper - has
-        a dataset with 2 sets of values
+        This test will be called 2 times because the data_provider - the
+        calculate helper - has 2 datasets
         """
