@@ -376,16 +376,28 @@ def _build_deferred_method(method, dataset, param_factory):
         `function`
     """
     if isinstance(dataset, GentyArgs):
-        test_method = lambda my_self: method(
-            my_self,
-            *param_factory(my_self, *dataset.args, **dataset.kwargs)
-        )
+        final_args = dataset.args
+        final_kwargs = dataset.kwargs
     else:
-        test_method = lambda my_self: method(
+        final_args = dataset
+        final_kwargs = {}
+
+    def test_method_wrapper(my_self):
+        params_to_actual_test = param_factory(
             my_self,
-            *param_factory(my_self, *dataset)
+            *final_args,
+            **final_kwargs
         )
-    return test_method
+
+        if not isinstance(params_to_actual_test, (tuple, list)):
+            params_to_actual_test = (params_to_actual_test, )
+
+        return method(
+            my_self,
+            *params_to_actual_test
+        )
+
+    return test_method_wrapper
 
 
 def _build_test_method(method, dataset, param_factory=None):

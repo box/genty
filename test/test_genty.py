@@ -76,6 +76,65 @@ class GentyTest(TestCase):
             )(),
         )
 
+    def test_genty_deferred_can_handle_single_parameter(self):
+        @genty
+        class SomeClass(object):
+            @genty_dataset((7, 4))
+            def my_param_factory(self, first, second):
+                return first + second
+
+            @genty_deferred(my_param_factory)
+            def test_decorated(self, sole_arg):
+                return sole_arg
+
+        instance = SomeClass()
+        self.assertEqual(
+            11,
+            getattr(
+                instance,
+                'test_decorated_{0}(7, 4)'.format('my_param_factory'),
+            )(),
+        )
+
+    def test_genty_deferred_can_be_chained(self):
+        @genty
+        class SomeClass(object):
+            @genty_dataset((7, 4))
+            def my_param_factory(self, first, second):
+                return first + second, first - second, max(first, second)
+
+            @genty_dataset(3, 5)
+            def another_param_factory(self, only):
+                return only + only, only - only, (only * only)
+
+            @genty_deferred(my_param_factory)
+            @genty_deferred(another_param_factory)
+            def test_decorated(self, value1, value2, value3):
+                return value1, value2, value3
+
+        instance = SomeClass()
+        self.assertEqual(
+            (11, 3, 7),
+            getattr(
+                instance,
+                'test_decorated_{0}(7, 4)'.format('my_param_factory'),
+            )(),
+        )
+        self.assertEqual(
+            (6, 0, 9),
+            getattr(
+                instance,
+                'test_decorated_{0}(3)'.format('another_param_factory'),
+            )(),
+        )
+        self.assertEqual(
+            (10, 0, 25),
+            getattr(
+                instance,
+                'test_decorated_{0}(5)'.format('another_param_factory'),
+            )(),
+        )
+
     def test_deferred_args_can_use_gentry_args(self):
         @genty
         class SomeClass(object):
