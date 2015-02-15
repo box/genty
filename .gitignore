@@ -32,6 +32,7 @@ htmlcov/
 
 # IntelliJ
 .idea
+genty.iml
 
 # Mac noise
 .DS_Store
