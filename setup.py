@@ -30,7 +30,7 @@ def main():
         test_requirements.append('unittest2')
     setup(
         name='genty',
-        version='1.1.0',
+        version='1.2.0',
         description='Allows you to run a test with multiple data sets',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -40,7 +40,7 @@ def main():
         packages=find_packages(exclude=['test']),
         test_suite='test',
         zip_safe=False,
-        keywords=('genty', 'tests', 'generative'),
+        keywords=('genty', 'tests', 'generative', 'unittest'),
         classifiers=CLASSIFIERS,
         install_requires=requirements,
         tests_require=test_requirements,

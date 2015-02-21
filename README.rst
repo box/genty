@@ -10,24 +10,35 @@ genty
 .. image:: https://pypip.in/d/genty/badge.png
     :target: https://pypi.python.org/pypi/genty
 
-Upcoming Breaking Change!
+Hot in 1.2!
 -------------------------
 
-When Genty was released through version 0.2.0, it was released under the namespace
-box.test. In version 0.3.0, importing genty became easier:
+Parametrized tests where the final parameters are not determined until test
+execution time. It looks like so:
 
 .. code-block:: python
 
-    from genty import genty, genty_dataset, genty_args
+    @genty_dataset((1000, 100), (100, 1))
+    def calculate(self, x_val, y_val):
+        # when this is called... we've been authenticated, perhaps in
+        # some Test.setUp() method.
+        
+        # Let's imagine that _some_function requires that authentication.
+        # And it returns a 3-tuple, matching that signature of
+        # of the test(s) decorated with this 'calculate' method.
+        return self._some_function(x_val, y_val)
 
-vs.
+    @genty_dataprovider(calculate)
+    def test_heavy(self, data1, data2, data3):
+        ...
 
-.. code-block:: python
+The ``calculate()`` method is called 2 times based on the ``@genty_dataset``
+decorator, and each of it's return values define the final parameters that will
+be given to the method ``test_heavy(...)``.
 
-    from box.test.genty import genty, genty_dataset, genty_args
-    from box.test.genty.genty_args import genty_args
-
-In version 1.0.0, however, you will no longer be able to import genty from box.test.
+Previously genty only supported parameters defined at import time of the test
+module. Now heavyweight data, or data that requires other test-time data, can
+be created at test execution time.
 
 About
 -----
@@ -257,6 +268,25 @@ Run all tests using -
     tox
 
 The tox tests include code style checks via pep8 and pylint.
+
+Notes
+-------------------------
+
+When Genty was released through version 0.2.0, it was released under the namespace
+box.test. In version 0.3.0, importing genty became easier:
+
+.. code-block:: python
+
+    from genty import genty, genty_dataset, genty_args
+
+vs.
+
+.. code-block:: python
+
+    from box.test.genty import genty, genty_dataset, genty_args
+    from box.test.genty.genty_args import genty_args
+
+Starting with 1.0.0, however, you will no longer be able to import genty from box.test.
 
 
 Copyright and License
