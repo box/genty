@@ -186,7 +186,7 @@ authenticate, etc. This is supported using the ``@genty_dataprovider`` decorator
         super(MyClassTests, self).setUp()
         
         # http authentication happens
-        # And image that _some_function is actually some http request
+        # And imagine that _some_function is actually some http request
         self._some_function = lambda x, y: ((x + y), (x - y), (x * y))
 
     @genty_dataset((1000, 100), (100, 1))
