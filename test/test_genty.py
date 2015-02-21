@@ -5,7 +5,7 @@ import functools
 import inspect
 from mock import patch
 import six
-from genty import genty, genty_args, genty_dataset, genty_repeat, genty_deferred
+from genty import genty, genty_args, genty_dataset, genty_repeat, genty_dataprovider
 from genty.private import encode_non_ascii_string
 from test.base_test_case import TestCase
 
@@ -56,14 +56,14 @@ class GentyTest(TestCase):
         instance = SomeClass()
         self.assertEqual(11, getattr(instance, 'test_decorated(4, 7)')())
 
-    def test_genty_decorates_with_deferred_args(self):
+    def test_genty_decorates_with_dataprovider_args(self):
         @genty
         class SomeClass(object):
             @genty_dataset((7, 4))
             def my_param_factory(self, first, second):
                 return first + second, first - second, max(first, second)
 
-            @genty_deferred(my_param_factory)
+            @genty_dataprovider(my_param_factory)
             def test_decorated(self, summation, difference, maximum):
                 return summation, difference, maximum
 
@@ -76,14 +76,14 @@ class GentyTest(TestCase):
             )(),
         )
 
-    def test_genty_deferred_can_handle_single_parameter(self):
+    def test_genty_dataprovider_can_handle_single_parameter(self):
         @genty
         class SomeClass(object):
             @genty_dataset((7, 4))
             def my_param_factory(self, first, second):
                 return first + second
 
-            @genty_deferred(my_param_factory)
+            @genty_dataprovider(my_param_factory)
             def test_decorated(self, sole_arg):
                 return sole_arg
 
@@ -96,7 +96,7 @@ class GentyTest(TestCase):
             )(),
         )
 
-    def test_genty_deferred_can_be_chained(self):
+    def test_genty_dataprovider_can_be_chained(self):
         @genty
         class SomeClass(object):
             @genty_dataset((7, 4))
@@ -107,8 +107,8 @@ class GentyTest(TestCase):
             def another_param_factory(self, only):
                 return only + only, only - only, (only * only)
 
-            @genty_deferred(my_param_factory)
-            @genty_deferred(another_param_factory)
+            @genty_dataprovider(my_param_factory)
+            @genty_dataprovider(another_param_factory)
             def test_decorated(self, value1, value2, value3):
                 return value1, value2, value3
 
@@ -135,7 +135,7 @@ class GentyTest(TestCase):
             )(),
         )
 
-    def test_deferred_args_can_use_gentry_args(self):
+    def test_dataprovider_args_can_use_gentry_args(self):
         @genty
         class SomeClass(object):
             @genty_dataset(
@@ -144,7 +144,7 @@ class GentyTest(TestCase):
             def my_param_factory(self, first, second):
                 return first + second, first - second, max(first, second)
 
-            @genty_deferred(my_param_factory)
+            @genty_dataprovider(my_param_factory)
             def test_decorated(self, summation, difference, maximum):
                 return summation, difference, maximum
 
@@ -157,14 +157,14 @@ class GentyTest(TestCase):
             )(),
         )
 
-    def test_deferred_and_non_deferred_datasets_can_mix(self):
+    def test_dataproviders_and_datasets_can_mix(self):
         @genty
         class SomeClass(object):
             @genty_dataset((7, 4))
             def my_param_factory(self, first, second):
                 return first + second, first - second
 
-            @genty_deferred(my_param_factory)
+            @genty_dataprovider(my_param_factory)
             @genty_dataset((7, 4), (11, 3))
             def test_decorated(self, param1, param2):
                 return param1, param1, param2, param2

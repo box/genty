@@ -177,7 +177,7 @@ would run 4 tests, producing output like
 
 Sometimes the parameters to a test can't be determined at module load time. For example,
 some test might be based on results from some http request. And first the test needs to
-authenticate, etc. This is supported using the ``@genty_deferred`` decorator like so:
+authenticate, etc. This is supported using the ``@genty_dataprovider`` decorator like so:
 
 
 .. code-block:: python
@@ -194,7 +194,7 @@ authenticate, etc. This is supported using the ``@genty_deferred`` decorator lik
         # when this is called... we've been authenticated
         return self._some_function(x_val, y_val)
 
-    @genty_deferred(calculate)
+    @genty_dataprovider(calculate)
     def test_heavy(self, data1, data2, data3):
         ...
 
@@ -216,7 +216,7 @@ would run 4 tests, producing output like
 Notice here how the name of the helper (``calculate``) is added to the names of the 2
 executed test cases.
 
-Like ``@genty_dataset``, ``@genty_deferred`` can be chained together.
+Like ``@genty_dataset``, ``@genty_dataprovider`` can be chained together.
 
 Enjoy!
 
