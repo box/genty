@@ -1,13 +1,13 @@
 genty
 =====
 
-.. image:: https://travis-ci.org/box/genty.png?branch=master
+.. image:: https://travis-ci.org/box/genty.svg?branch=master
     :target: https://travis-ci.org/box/genty
 
-.. image:: https://pypip.in/v/genty/badge.png
+.. image:: https://pypip.in/v/genty/badge.svg
     :target: https://pypi.python.org/pypi/genty
 
-.. image:: https://pypip.in/d/genty/badge.png
+.. image:: https://pypip.in/d/genty/badge.svg
     :target: https://pypi.python.org/pypi/genty
 
 Hot in 1.2!
