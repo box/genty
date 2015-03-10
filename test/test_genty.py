@@ -96,6 +96,25 @@ class GentyTest(TestCase):
             )(),
         )
 
+    def test_genty_dataprovider_doesnt_need_any_datasets(self):
+        @genty
+        class SomeClass(object):
+            def my_param_factory(self):
+                return 101
+
+            @genty_dataprovider(my_param_factory)
+            def test_decorated(self, sole_arg):
+                return sole_arg
+
+        instance = SomeClass()
+        self.assertEqual(
+            101,
+            getattr(
+                instance,
+                'test_decorated_{0}'.format('my_param_factory'),
+            )(),
+        )
+
     def test_genty_dataprovider_can_be_chained(self):
         @genty
         class SomeClass(object):

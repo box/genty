@@ -25,7 +25,7 @@ def genty_dataprovider(builder_function):
     :type builder_function:
         `callable`
     """
-    datasets = builder_function.genty_datasets
+    datasets = getattr(builder_function, 'genty_datasets', {None: ()})
 
     def wrap(test_method):
         # Save the data providers in the test method. This data will be
