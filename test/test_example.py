@@ -74,3 +74,12 @@ class ExampleTests(TestCase):
         This test will be called 2 times because the data_provider - the
         calculate helper - has 2 datasets
         """
+
+    def no_dataset(self):
+        return self._some_function(100, 200)
+
+    @genty_dataprovider(no_dataset)
+    def test_dataprovider_with_no_dataset(self, data1, data2, data3):
+        """
+        Uses a dataprovider that has no datasets.
+        """

@@ -129,7 +129,7 @@ def _expand_repeats(test_functions):
                     dataprovider,
                     repeat_suffix,
                 )
-        elif dataset:
+        else:
             yield name, func, dataset_name, dataset, dataprovider, None
 
 
@@ -297,15 +297,14 @@ def _build_final_method_name(
     :rtype:
         `unicode`
     """
-    if not dataset_name and not repeat_suffix:
-        return method_name
-
-    suffix = ''
-
     # For tests using a dataprovider, append "_<dataprovider_name>" to
     #  the test method name
+    suffix = ''
     if dataprovider_name:
         suffix = '_{0}'.format(dataprovider_name)
+
+    if not dataset_name and not repeat_suffix:
+        return '{0}{1}'.format(method_name, suffix)
 
     # Place data_set info inside parens, as if it were a function call
     suffix = '{0}({1})'.format(suffix, dataset_name or "")
@@ -422,7 +421,7 @@ def _build_test_method(method, dataset, dataprovider=None):
     :rtype:
         `function`
     """
-    if dataset and dataprovider:
+    if dataprovider:
         test_method = _build_dataprovider_method(method, dataset, dataprovider)
     elif dataset:
         test_method = _build_dataset_method(method, dataset)
