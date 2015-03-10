@@ -129,7 +129,7 @@ def _expand_repeats(test_functions):
                     dataprovider,
                     repeat_suffix,
                 )
-        elif dataset or dataprovider:
+        else:
             yield name, func, dataset_name, dataset, dataprovider, None
 
 
