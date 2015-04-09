@@ -244,7 +244,7 @@ To install, simply:
 Contributing
 ------------
 
-See `CONTRIBUTING <https://github.com/box/genty/blob/master/CONTRIBUTING.rst>`_.
+See `CONTRIBUTING.rst <https://github.com/box/genty/blob/master/CONTRIBUTING.rst>`_.
 
 
 Setup

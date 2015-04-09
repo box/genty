@@ -30,7 +30,7 @@ def main():
         test_requirements.append('unittest2')
     setup(
         name='genty',
-        version='1.2.0',
+        version='1.2.1',
         description='Allows you to run a test with multiple data sets',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
