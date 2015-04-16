@@ -18,8 +18,14 @@ def genty_dataprovider(builder_function):
 
     :param builder_function:
         A callable that returns parameters that will be passed to the method
-        decorated by this decorator. If the builder_function returns a tuple
-        or list, then that will be passed as *args to the decorated method.
+        decorated by this decorator.
+
+        If the builder_function returns a tuple or list, then that will be
+        passed as *args to the decorated method.
+
+        If the builder_function returns a :class:`GentyArgs`, then that will
+        be used to pass *args and **kwargs to the decorated method.
+
         Any other return value will be treated as a single parameter, and
         passed as such to the decorated method.
     :type builder_function:

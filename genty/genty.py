@@ -382,19 +382,21 @@ def _build_dataprovider_method(method, dataset, dataprovider):
         final_kwargs = {}
 
     def test_method_wrapper(my_self):
-        params_to_actual_test = dataprovider(
+        args = dataprovider(
             my_self,
             *final_args,
             **final_kwargs
         )
 
-        if not isinstance(params_to_actual_test, (tuple, list)):
-            params_to_actual_test = (params_to_actual_test, )
+        kwargs = {}
 
-        return method(
-            my_self,
-            *params_to_actual_test
-        )
+        if isinstance(args, GentyArgs):
+            kwargs = args.kwargs
+            args = args.args
+        elif not isinstance(args, (tuple, list)):
+            args = (args, )
+
+        return method(my_self, *args, **kwargs)
 
     return test_method_wrapper
 

@@ -493,3 +493,17 @@ class GentyTest(TestCase):
         instance = SomeClass()
 
         self.assertIn('test_defined_in_metaclass({0})'.format(repr('foo')), dir(instance))
+
+    def test_dataprovider_returning_genty_args_passes_correct_args(self):
+        @genty
+        class TestClass(object):
+            def builder(self):
+                return genty_args(42, named='named_arg')
+
+            @genty_dataprovider(builder)
+            def test_method(self, number, default=None, named=None):
+                return number, default, named
+
+        instance = TestClass()
+        # pylint:disable=no-member
+        self.assertItemsEqual((42, None, 'named_arg'), instance.test_method_builder())
