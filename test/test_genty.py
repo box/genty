@@ -506,4 +506,4 @@ class GentyTest(TestCase):
 
         instance = TestClass()
         # pylint:disable=no-member
-        self.assertItemsEqual(instance.test_method_builder(), (42, None, 'named_arg'))
+        self.assertItemsEqual((42, None, 'named_arg'), instance.test_method_builder())

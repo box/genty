@@ -3,7 +3,7 @@
 Release History
 ---------------
 
-1.2.2 (2015-04-09)
+1.2.2 (2015-04-16)
 ++++++++++++++++++
 
 - `@genty_dataprovider` helper methods can now return :class:`GentyArgs`
