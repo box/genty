@@ -1,13 +1,16 @@
 genty
 =====
 
-.. image:: https://travis-ci.org/box/genty.svg?branch=master
+.. image:: http://opensource.box.com/badges/active.svg
+    :target: http://opensource.box.com/badges
+
+.. image:: https://travis-ci.org/box/genty.png?branch=master
     :target: https://travis-ci.org/box/genty
 
-.. image:: https://pypip.in/v/genty/badge.svg
+.. image:: https://img.shields.io/pypi/v/genty.svg
     :target: https://pypi.python.org/pypi/genty
 
-.. image:: https://pypip.in/d/genty/badge.svg
+.. image:: https://img.shields.io/pypi/dm/genty.svg
     :target: https://pypi.python.org/pypi/genty
 
 Hot in 1.2!
