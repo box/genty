@@ -3,6 +3,13 @@
 Release History
 ---------------
 
+Upcoming
+++++++++
+
+- CPython 3.5 support.
+- PyPy 2.6 support.
+- Travis CI testing for CPython 3.5 and PyPy 2.6.0.
+
 1.2.2 (2015-04-16)
 ++++++++++++++++++
 

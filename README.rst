@@ -272,6 +272,9 @@ Run all tests using -
 
 The tox tests include code style checks via pep8 and pylint.
 
+The tox tests are configured to run on Python 2.6, 2.7, 3.3, 3.4, 3.5, and
+PyPy 2.6.
+
 Notes
 -------------------------
 
