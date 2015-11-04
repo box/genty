@@ -437,17 +437,38 @@ class GentyTest(TestCase):
     def test_genty_properly_composes_method_with_special_chars_in_dataset_name(self):
         @genty
         class SomeClass(object):
-            @genty_dataset(*r'!"#$%&\'()*.+-/:;>=<?@[\]^_`{|}~,')
+            @genty_dataset(*r'!"#$%&\'()*+-/:;>=<?@[\]^_`{|}~,')
             def test_unicode(self, _):
                 return 33
 
         instance = SomeClass()
 
-        for char in r'!"#$%&\'()*.+-/:;>=<?@[\]^_`{|}~,':
+        for char in r'!"#$%&\'()*+-/:;>=<?@[\]^_`{|}~,':
             self.assertEqual(
                 33,
                 getattr(instance, 'test_unicode({0})'.format(repr(char)))()
             )
+
+    def test_gentry_replaces_standard_period_with_middle_dot(self):
+        # The nosetest multi-processing code parses the full test name
+        # to discern package/module names. Thus any periods in the test-name
+        # causes that code to fail. This test verifies that periods are replaced
+        # with the unicode middle-dot character.
+        @genty
+        class SomeClass(object):
+            @genty_dataset('a.b.c')
+            def test_period_char(self, _):
+                return 33
+
+        instance = SomeClass()
+
+        for attr in dir(instance):
+            if attr.startswith(encode_non_ascii_string('test_period_char')):
+                self.assertNotIn(encode_non_ascii_string('.'), attr)
+                self.assertIn(encode_non_ascii_string('·'), attr)
+                break
+        else:
+            raise KeyError("failed to find the expected test")
 
     def test_genty_properly_calls_patched_methods(self):
         class PatchableClass(object):

@@ -12,6 +12,8 @@ from genty import genty, genty_repeat, genty_dataset, genty_args, genty_dataprov
 
 @genty
 class ExampleTests(TestCase):
+    _multiprocess_can_split_ = True
+
     def setUp(self):
         super(ExampleTests, self).setUp()
 
@@ -82,4 +84,10 @@ class ExampleTests(TestCase):
     def test_dataprovider_with_no_dataset(self, data1, data2, data3):
         """
         Uses a dataprovider that has no datasets.
+        """
+
+    @genty_dataset('127.0.0.1')
+    def test_with_period_char_in_dataset(self, arg):
+        """
+        A dataset with a '.' doesn't screw up nosetests --processes=4
         """
