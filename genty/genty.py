@@ -312,7 +312,7 @@ def _build_final_method_name(
         # causes that code to fail. So replace any periods with the unicode
         # middle-dot character. Yes, this change is applied independent
         # of the test runner being used... and that's fine since there is
-        # no real contract as to how the fabricated test's are named.
+        # no real contract as to how the fabricated tests are named.
         dataset_name = dataset_name.replace('.', '\xb7')
 
     # Place data_set info inside parens, as if it were a function call
