@@ -12,6 +12,9 @@ from genty import genty, genty_repeat, genty_dataset, genty_args, genty_dataprov
 
 @genty
 class ExampleTests(TestCase):
+
+    # This is set so that if nosetest's multi-processing capability is being used, the
+    # tests in this class can be split across processes.
     _multiprocess_can_split_ = True
 
     def setUp(self):

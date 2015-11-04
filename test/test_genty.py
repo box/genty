@@ -6,6 +6,7 @@ import inspect
 from mock import patch
 import six
 from genty import genty, genty_args, genty_dataset, genty_repeat, genty_dataprovider
+from genty.genty import REPLACE_FOR_PERIOD_CHAR
 from genty.private import encode_non_ascii_string
 from test.base_test_case import TestCase
 
@@ -154,7 +155,7 @@ class GentyTest(TestCase):
             )(),
         )
 
-    def test_dataprovider_args_can_use_gentry_args(self):
+    def test_dataprovider_args_can_use_genty_args(self):
         @genty
         class SomeClass(object):
             @genty_dataset(
@@ -449,7 +450,7 @@ class GentyTest(TestCase):
                 getattr(instance, 'test_unicode({0})'.format(repr(char)))()
             )
 
-    def test_gentry_replaces_standard_period_with_middle_dot(self):
+    def test_genty_replaces_standard_period_with_middle_dot(self):
         # The nosetest multi-processing code parses the full test name
         # to discern package/module names. Thus any periods in the test-name
         # causes that code to fail. This test verifies that periods are replaced
@@ -464,8 +465,16 @@ class GentyTest(TestCase):
 
         for attr in dir(instance):
             if attr.startswith(encode_non_ascii_string('test_period_char')):
-                self.assertNotIn(encode_non_ascii_string('.'), attr, "didn't expect a period character")
-                self.assertIn(encode_non_ascii_string('·'), attr, "expected the middle-dot replacement character")
+                self.assertNotIn(
+                    encode_non_ascii_string('.'),
+                    attr,
+                    "didn't expect a period character",
+                )
+                self.assertIn(
+                    encode_non_ascii_string(REPLACE_FOR_PERIOD_CHAR),
+                    attr,
+                    "expected the middle-dot replacement character",
+                )
                 break
         else:
             raise KeyError("failed to find the expected test")
