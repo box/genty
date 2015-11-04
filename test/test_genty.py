@@ -464,8 +464,8 @@ class GentyTest(TestCase):
 
         for attr in dir(instance):
             if attr.startswith(encode_non_ascii_string('test_period_char')):
-                self.assertNotIn(encode_non_ascii_string('.'), attr)
-                self.assertIn(encode_non_ascii_string('·'), attr)
+                self.assertNotIn(encode_non_ascii_string('.'), attr, "didn't expect a period character")
+                self.assertIn(encode_non_ascii_string('·'), attr, "expected the middle-dot replacement character")
                 break
         else:
             raise KeyError("failed to find the expected test")
