@@ -8,7 +8,7 @@ import six
 from genty import genty, genty_args, genty_dataset, genty_repeat, genty_dataprovider
 from genty.genty import REPLACE_FOR_PERIOD_CHAR
 from genty.private import encode_non_ascii_string
-from test.base_test_case import TestCase
+from test.test_case_base import TestCase
 
 
 class GentyTest(TestCase):

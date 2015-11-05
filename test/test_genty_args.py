@@ -6,7 +6,7 @@ import six
 from genty import genty_dataset, genty, genty_args
 from genty.private import format_arg
 
-from test.base_test_case import TestCase
+from test.test_case_base import TestCase
 
 
 @genty

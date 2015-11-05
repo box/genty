@@ -1,9 +1,9 @@
 # coding: utf-8
 
 from __future__ import unicode_literals
-from unittest import TestCase
 
 from genty import genty_dataset, genty_dataprovider
+from test.test_case_base import TestCase
 
 
 class GentyDatasetTest(TestCase):
