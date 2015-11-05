@@ -6,6 +6,7 @@ import inspect
 from mock import patch
 import six
 from genty import genty, genty_args, genty_dataset, genty_repeat, genty_dataprovider
+from genty.genty import REPLACE_FOR_PERIOD_CHAR
 from genty.private import encode_non_ascii_string
 from test.base_test_case import TestCase
 
@@ -154,7 +155,7 @@ class GentyTest(TestCase):
             )(),
         )
 
-    def test_dataprovider_args_can_use_gentry_args(self):
+    def test_dataprovider_args_can_use_genty_args(self):
         @genty
         class SomeClass(object):
             @genty_dataset(
@@ -437,17 +438,46 @@ class GentyTest(TestCase):
     def test_genty_properly_composes_method_with_special_chars_in_dataset_name(self):
         @genty
         class SomeClass(object):
-            @genty_dataset(*r'!"#$%&\'()*.+-/:;>=<?@[\]^_`{|}~,')
+            @genty_dataset(*r'!"#$%&\'()*+-/:;>=<?@[\]^_`{|}~,')
             def test_unicode(self, _):
                 return 33
 
         instance = SomeClass()
 
-        for char in r'!"#$%&\'()*.+-/:;>=<?@[\]^_`{|}~,':
+        for char in r'!"#$%&\'()*+-/:;>=<?@[\]^_`{|}~,':
             self.assertEqual(
                 33,
                 getattr(instance, 'test_unicode({0})'.format(repr(char)))()
             )
+
+    def test_genty_replaces_standard_period_with_middle_dot(self):
+        # The nosetest multi-processing code parses the full test name
+        # to discern package/module names. Thus any periods in the test-name
+        # causes that code to fail. This test verifies that periods are replaced
+        # with the unicode middle-dot character.
+        @genty
+        class SomeClass(object):
+            @genty_dataset('a.b.c')
+            def test_period_char(self, _):
+                return 33
+
+        instance = SomeClass()
+
+        for attr in dir(instance):
+            if attr.startswith(encode_non_ascii_string('test_period_char')):
+                self.assertNotIn(
+                    encode_non_ascii_string('.'),
+                    attr,
+                    "didn't expect a period character",
+                )
+                self.assertIn(
+                    encode_non_ascii_string(REPLACE_FOR_PERIOD_CHAR),
+                    attr,
+                    "expected the middle-dot replacement character",
+                )
+                break
+        else:
+            raise KeyError("failed to find the expected test")
 
     def test_genty_properly_calls_patched_methods(self):
         class PatchableClass(object):

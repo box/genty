@@ -11,6 +11,8 @@ import sys
 from .genty_args import GentyArgs
 from .private import encode_non_ascii_string
 
+REPLACE_FOR_PERIOD_CHAR = '\xb7'
+
 
 def genty(target_cls):
     """
@@ -305,6 +307,15 @@ def _build_final_method_name(
 
     if not dataset_name and not repeat_suffix:
         return '{0}{1}'.format(method_name, suffix)
+
+    if dataset_name:
+        # Nosetest multi-processing code parses the full test name
+        # to discern package/module names. Thus any periods in the test-name
+        # causes that code to fail. So replace any periods with the unicode
+        # middle-dot character. Yes, this change is applied independent
+        # of the test runner being used... and that's fine since there is
+        # no real contract as to how the fabricated tests are named.
+        dataset_name = dataset_name.replace('.', REPLACE_FOR_PERIOD_CHAR)
 
     # Place data_set info inside parens, as if it were a function call
     suffix = '{0}({1})'.format(suffix, dataset_name or "")
