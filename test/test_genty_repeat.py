@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from genty import genty_repeat
-from test.base_test_case import TestCase
+from test.test_case_base import TestCase
 
 
 class GentyRepeatTest(TestCase):
