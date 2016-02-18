@@ -6,6 +6,13 @@ Release History
 Upcoming
 ++++++++
 
+1.3.1 (2016-02-18)
+++++++++++++++++++
+
+- Create universal wheel with correct conditional dependencies for Python 2.6.
+- Include entire test/ directory in source distribution. test/__init__.py was
+  previously missing.
+
 1.3.0 (2015-11-05)
 ++++++++++++++++++
 
