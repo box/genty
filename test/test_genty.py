@@ -29,7 +29,7 @@ class GentyTest(TestCase):
             def test_not_decorated(self):
                 return 13
 
-        self.assertEquals(13, SomeClass().test_not_decorated())
+        self.assertEqual(13, SomeClass().test_not_decorated())
 
     def test_genty_ignores_non_test_methods(self):
         @genty
@@ -37,7 +37,7 @@ class GentyTest(TestCase):
             def random_method(self):
                 return 'hi'
 
-        self.assertEquals('hi', SomeClass().random_method())
+        self.assertEqual('hi', SomeClass().random_method())
 
     def test_genty_leaves_undecorated_tests_untouched(self):
         @genty

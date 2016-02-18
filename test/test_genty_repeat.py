@@ -13,7 +13,7 @@ class GentyRepeatTest(TestCase):
         def some_func():
             pass
 
-        self.assertEqual(15, some_func.genty_repeat_count)
+        self.assertEqual(15, some_func.genty_repeat_count)  # pylint:disable=no-member
 
     def test_repeat_decorator_decorates_method_with_appropriate_repeat_count(self):
         class SomeClass(object):
@@ -23,7 +23,7 @@ class GentyRepeatTest(TestCase):
 
         some_instance = SomeClass()
 
-        self.assertEqual(13, some_instance.some_func.genty_repeat_count)
+        self.assertEqual(13, some_instance.some_func.genty_repeat_count)  # pylint:disable=no-member
 
     def test_repeat_rejects_negative_counts(self):
         with self.assertRaises(ValueError) as context:
@@ -38,4 +38,4 @@ class GentyRepeatTest(TestCase):
         def some_func():
             pass
 
-        self.assertEqual(0, some_func.genty_repeat_count)
+        self.assertEqual(0, some_func.genty_repeat_count)   # pylint:disable=no-member

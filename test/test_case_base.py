@@ -2,8 +2,10 @@
 
 from __future__ import unicode_literals
 
-import six
 from unittest import TestCase as _TestCase
+
+import six
+
 if not hasattr(_TestCase, 'assertItemsEqual') and not hasattr(_TestCase, 'assertCountEqual'):
     # Python 2.6 support
     # pylint:disable=import-error
