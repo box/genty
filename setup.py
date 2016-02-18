@@ -1,9 +1,13 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
+
+from collections import defaultdict
 from os.path import dirname, join
+import sys
+
 from setuptools import setup, find_packages
-from sys import version_info
+
 
 CLASSIFIERS = [
     'Development Status :: 4 - Beta',
@@ -27,14 +31,26 @@ CLASSIFIERS = [
 
 def main():
     base_dir = dirname(__file__)
+    current_python_version = '{0}.{1}'.format(*sys.version_info[:2])
     requirements = ['six']
     test_requirements = []
-    if version_info[0] == 2 and version_info[1] == 6:
-        requirements.append('ordereddict')
+    extra_requirements = defaultdict(list)
+    conditional_dependencies = {
+        'ordereddict': ['2.6'],
+    }
+    for requirement, python_versions in conditional_dependencies.items():
+        for python_version in python_versions:
+            # <https://wheel.readthedocs.org/en/latest/#defining-conditional-dependencies>
+            python_conditional = 'python_version=="{0}"'.format(python_version)
+            key = ':{0}'.format(python_conditional)
+            extra_requirements[key].append(requirement)
+            if python_version == current_python_version:
+                requirements.append(requirement)
+    if current_python_version == '2.6':
         test_requirements.append('unittest2')
     setup(
         name='genty',
-        version='1.3.0',
+        version='1.3.1',
         description='Allows you to run a test with multiple data sets',
         long_description=open(join(base_dir, 'README.rst')).read(),
         author='Box',
@@ -47,6 +63,7 @@ def main():
         keywords=('genty', 'tests', 'generative', 'unittest'),
         classifiers=CLASSIFIERS,
         install_requires=requirements,
+        extras_require=extra_requirements,
         tests_require=test_requirements,
     )
 

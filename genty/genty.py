@@ -1,15 +1,19 @@
 # coding: utf-8
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
+
 import functools
 from itertools import chain
 import math
-import types
 import re
-import six
 import sys
+import types
+
+import six
+
 from .genty_args import GentyArgs
 from .private import encode_non_ascii_string
+
 
 REPLACE_FOR_PERIOD_CHAR = '\xb7'
 
