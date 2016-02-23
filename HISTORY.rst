@@ -6,6 +6,17 @@ Release History
 Upcoming
 ++++++++
 
+1.3.2 (2016-02-23)
+++++++++++++++++++
+
+- Create wheel with license file.
+- Change the ``license`` meta-data from the full license text, to just a short
+  string, as specified in [1][2].
+
+  [1] <https://docs.python.org/3.5/distutils/setupscript.html#additional-meta-data>
+
+  [2] <https://www.python.org/dev/peps/pep-0459/#license>
+
 1.3.1 (2016-02-18)
 ++++++++++++++++++
 
